@@ -1,0 +1,52 @@
+{
+  "name": "gi-parallax",
+  "version": "0.0.1",
+  "description": " HW accelerated scrollable images parallax using HTML5 canvas — Edit ",
+  "main": "index.js",
+  "scripts": {
+    "test": "node make test",
+    "serve": "node make serve",
+    "eslint": "node make eslint",
+    "build": "node make build",
+    "watch": "node make watch",
+    "minify": "node make minify",
+    "saucelabs": "node make saucelabs",
+    "default": "node make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Goldinteractive/parallax.git"
+  },
+  "keywords": [
+    "parallax",
+    "scroll"
+  ],
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "babel-core": "^5.8.24",
+    "babel-loader": "^5.3.2",
+    "chai": "^3.2.0",
+    "chokidar": "^1.0.5",
+    "eslint": "^1.4.3",
+    "karma": "^0.13.9",
+    "karma-babel-preprocessor": "^5.2.2",
+    "karma-coverage": "^0.5.2",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-sauce-launcher": "^0.2.14",
+    "serve": "^1.4.0",
+    "sinon": "^1.16.1",
+    "sinon-chai": "^2.8.0",
+    "uglify-js": "^2.4.24",
+    "webpack": "^1.12.2"
+  },
+  "author": "Gianluca Guarini (http://gianlucaguarini.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Goldinteractive/parallax/issues"
+  },
+  "homepage": "https://github.com/Goldinteractive/parallax",
+  "dependencies": {
+    "riot-observable": "^2.3.0-beta"
+  }
+}
