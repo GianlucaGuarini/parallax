@@ -21,14 +21,18 @@ class Parallax {
     // set the options extending the _defaults
     this.opts = opts
     this.canvases = this.createCanvases(typeof els == 'string' ? $$(els) : els)
-    this.imagesLoaded = 0
-
     if (!this.canvases.length) {
       console.warn(`No images were found with the selector "${els}"`)
       return
     }
+  }
+  /**
+   * Initialize the parallax
+   * @returns { Object } - Parallax
+   */
+  init() {
+    this.imagesLoaded = 0
     this.bind()
-
   }
   /**
    * Bind the instance events setting all the callbacks
@@ -40,6 +44,7 @@ class Parallax {
     stage.on('scroll', (...args) => this.onScroll.apply(this, args))
     this.canvases.forEach((canvas) => {
       canvas.one('loaded', () => this.onCanvasLoaded(canvas))
+      canvas.load()
     })
 
     return this
@@ -50,7 +55,7 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   onCanvasLoaded(canvas) {
-    this.trigger('image:loaded', canvas.img)
+    this.trigger('image:loaded', canvas.img, canvas)
     this.imagesLoaded ++
     canvas.draw(stage)
     if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded')
@@ -111,7 +116,7 @@ class Parallax {
   set opts (opts) {
     this._defaults = {
       offsetYBounds: 200,
-      intensity: 0.3
+      intensity: 0.8
     }
     extend(this._defaults, opts)
   }

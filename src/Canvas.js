@@ -14,13 +14,12 @@ export default class Canvas {
     this.c = this.el.getContext('2d')
     this.wrapper = img.parentNode
     this.isLoaded = false
-    this.bind()
   }
   /**
-   * Bind the instance events setting all the callbacks
+   * Load the image
    * @returns { Object } - Canvas
    */
-  bind() {
+  load() {
 
     if (!this.img.width || !this.img.width)
       this.img.onload = this.onImageLoaded.bind(this)
@@ -66,8 +65,8 @@ export default class Canvas {
     var iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
       r = Math.min(w / iw, h / ih),
-      nw = iw * r, /// new prop. width
-      nh = ih * r, /// new prop. height
+      nw = Math.ceil(iw * r), /// new prop. width
+      nh = Math.ceil(ih * r), /// new prop. height
       cx, cy, cw, ch, ar = 1
 
     /// decide which gap to fill
@@ -77,11 +76,11 @@ export default class Canvas {
     nh *= ar
 
     /// calc source rectangle
-    cw = ~~(iw / (nw / w))
-    ch = ~~(ih / (nh / h))
+    cw = iw / (nw / w)
+    ch = ih / (nh / h)
 
-    cx = ~~((iw - cw) * offsetX)
-    cy = ~~((ih - ch) * offsetY)
+    cx = (iw - cw) * offsetX
+    cy = (ih - ch) * offsetY
 
     /// make sure source rectangle is valid
     if (cx < 0) x = -cx
@@ -118,8 +117,8 @@ export default class Canvas {
   get size() {
     var props = this.bounds
     return {
-      height: props.height,
-      width: props.width
+      height: Math.ceil(props.height),
+      width: Math.ceil(props.width)
     }
   }
 }

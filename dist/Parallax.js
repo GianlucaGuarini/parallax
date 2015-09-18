@@ -103,21 +103,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // set the options extending the _defaults
 	    this.opts = opts;
 	    this.canvases = this.createCanvases(typeof els == 'string' ? (0, _helpersHelpers.$$)(els) : els);
-	    this.imagesLoaded = 0;
-
 	    if (!this.canvases.length) {
 	      console.warn('No images were found with the selector "' + els + '"');
 	      return;
 	    }
-	    this.bind();
 	  }
 
 	  /**
-	   * Bind the instance events setting all the callbacks
+	   * Initialize the parallax
 	   * @returns { Object } - Parallax
 	   */
 
 	  _createClass(Parallax, [{
+	    key: 'init',
+	    value: function init() {
+	      this.imagesLoaded = 0;
+	      this.bind();
+	    }
+
+	    /**
+	     * Bind the instance events setting all the callbacks
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
 	    key: 'bind',
 	    value: function bind() {
 	      var _this = this;
@@ -140,6 +148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        canvas.one('loaded', function () {
 	          return _this.onCanvasLoaded(canvas);
 	        });
+	        canvas.load();
 	      });
 
 	      return this;
@@ -153,7 +162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onCanvasLoaded',
 	    value: function onCanvasLoaded(canvas) {
-	      this.trigger('image:loaded', canvas.img);
+	      this.trigger('image:loaded', canvas.img, canvas);
 	      this.imagesLoaded++;
 	      canvas.draw(stage);
 	      if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded');
@@ -226,7 +235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    set: function set(opts) {
 	      this._defaults = {
 	        offsetYBounds: 200,
-	        intensity: 0.3
+	        intensity: 0.8
 	      };
 	      (0, _helpersHelpers.extend)(this._defaults, opts);
 	    },
@@ -622,17 +631,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.c = this.el.getContext('2d');
 	    this.wrapper = img.parentNode;
 	    this.isLoaded = false;
-	    this.bind();
 	  }
 
 	  /**
-	   * Bind the instance events setting all the callbacks
+	   * Load the image
 	   * @returns { Object } - Canvas
 	   */
 
 	  _createClass(Canvas, [{
-	    key: 'bind',
-	    value: function bind() {
+	    key: 'load',
+	    value: function load() {
 
 	      if (!this.img.width || !this.img.width) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
 
@@ -688,9 +696,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var iw = this.img.naturalWidth || this.img.width,
 	          ih = this.img.naturalHeight || this.img.height,
 	          r = Math.min(w / iw, h / ih),
-	          nw = iw * r,
+	          nw = Math.ceil(iw * r),
 	          /// new prop. width
-	      nh = ih * r,
+	      nh = Math.ceil(ih * r),
 	          /// new prop. height
 	      cx,
 	          cy,
@@ -705,11 +713,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nh *= ar;
 
 	      /// calc source rectangle
-	      cw = ~ ~(iw / (nw / w));
-	      ch = ~ ~(ih / (nh / h));
+	      cw = iw / (nw / w);
+	      ch = ih / (nh / h);
 
-	      cx = ~ ~((iw - cw) * offsetX);
-	      cy = ~ ~((ih - ch) * offsetY);
+	      cx = (iw - cw) * offsetX;
+	      cy = (ih - ch) * offsetY;
 
 	      /// make sure source rectangle is valid
 	      if (cx < 0) x = -cx;
@@ -755,8 +763,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    get: function get() {
 	      var props = this.bounds;
 	      return {
-	        height: props.height,
-	        width: props.width
+	        height: Math.ceil(props.height),
+	        width: Math.ceil(props.width)
 	      };
 	    }
 	  }]);
