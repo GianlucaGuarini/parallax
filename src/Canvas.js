@@ -55,19 +55,13 @@ export default class Canvas {
     this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY * this.opts.intensity)
     return this
   }
-  drawImageProp(ctx, x, y, w, h, offsetX, offsetY) {
+  drawImageProp(ctx, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
 
     if (arguments.length === 2) {
       x = y = 0
       w = ctx.canvas.width
       h = ctx.canvas.height
     }
-
-    /// default offset is center
-    offsetX = offsetX ? offsetX : 0.5
-    offsetY = offsetY ? offsetY : 0.5
-
-
 
     var iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
@@ -90,6 +84,8 @@ export default class Canvas {
     cy = ~~((ih - ch) * offsetY)
 
     /// make sure source rectangle is valid
+    if (cx < 0) x = -cx
+    if (cy < 0) y = -cy
     if (cx < 0) cx = 0
     if (cy < 0) cy = 0
     if (cw > iw) cw = iw

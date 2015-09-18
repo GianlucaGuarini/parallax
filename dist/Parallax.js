@@ -356,11 +356,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function bind() {
 	      var _this = this;
 
-	      window.addEventListener('mousewheel', function (e) {
-	        return _this.scroll(e);
+	      window.addEventListener('mousewheel', function () {
+	        return _this.scroll();
 	      }, true);
-	      window.addEventListener('scroll', function (e) {
-	        return _this.scroll(e);
+	      window.addEventListener('scroll', function () {
+	        return _this.scroll();
+	      }, true);
+	      window.addEventListener('touchmove', function () {
+	        return _this.scroll();
 	      }, true);
 	      window.addEventListener('resize', function () {
 	        return _this.resize();
@@ -672,17 +675,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  }, {
 	    key: 'drawImageProp',
-	    value: function drawImageProp(ctx, x, y, w, h, offsetX, offsetY) {
+	    value: function drawImageProp(ctx, x, y, w, h) {
+	      var offsetX = arguments.length <= 5 || arguments[5] === undefined ? 0.5 : arguments[5];
+	      var offsetY = arguments.length <= 6 || arguments[6] === undefined ? 0.5 : arguments[6];
 
 	      if (arguments.length === 2) {
 	        x = y = 0;
 	        w = ctx.canvas.width;
 	        h = ctx.canvas.height;
 	      }
-
-	      /// default offset is center
-	      offsetX = offsetX ? offsetX : 0.5;
-	      offsetY = offsetY ? offsetY : 0.5;
 
 	      var iw = this.img.naturalWidth || this.img.width,
 	          ih = this.img.naturalHeight || this.img.height,
@@ -711,6 +712,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      cy = ~ ~((ih - ch) * offsetY);
 
 	      /// make sure source rectangle is valid
+	      if (cx < 0) x = -cx;
+	      if (cy < 0) y = -cy;
 	      if (cx < 0) cx = 0;
 	      if (cy < 0) cy = 0;
 	      if (cw > iw) cw = iw;
