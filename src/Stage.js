@@ -16,13 +16,13 @@ const
 export default class Stage {
   constructor() {
     // make this object observable
-    observable(this)
+    o(this)
     this.tick = false
     this.resizeTimer = null
     this.bind()
   }
   /**
-   * Bind the window on scroll
+   * Bind the window events
    * @returns { Object } - Stage
    */
   bind() {

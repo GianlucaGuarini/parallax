@@ -68,15 +68,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _helpersHelpers = __webpack_require__(1);
 
-	var _helpersHelpers2 = _interopRequireDefault(_helpersHelpers);
-
 	var _Stage = __webpack_require__(2);
 
 	var _Stage2 = _interopRequireDefault(_Stage);
 
-	var _Wrapper = __webpack_require__(4);
+	var _Canvas = __webpack_require__(4);
 
-	var _Wrapper2 = _interopRequireDefault(_Wrapper);
+	var _Canvas2 = _interopRequireDefault(_Canvas);
+
+	var _riotObservable = __webpack_require__(3);
+
+	var _riotObservable2 = _interopRequireDefault(_riotObservable);
 
 	/**
 	 * There is no need to listen several times all the window events
@@ -91,38 +93,92 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var Parallax = (function () {
-	  function Parallax(el, opts) {
-	    var _this = this;
+	  function Parallax(els) {
+	    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
 	    _classCallCheck(this, Parallax);
 
-	    this.wrapper = new _Wrapper2['default'](el);
-	    stage.on('resize', function () {
-	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	      }
+	    // make this object observable
+	    (0, _riotObservable2['default'])(this);
+	    this.canvases = this.createCanvases(typeof els == 'string' ? (0, _helpersHelpers.$$)(els) : els);
+	    this.imagesLoaded = 0;
 
-	      return _this.onResize.apply(_this, args);
-	    });
-	    stage.on('scroll', function () {
-	      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	        args[_key2] = arguments[_key2];
-	      }
+	    if (!this.canvases.length) {
+	      console.warn('No images were found with the selector "' + els + '"');
+	      return;
+	    }
 
-	      return _this.onScroll.apply(_this, args);
-	    });
+	    // set the options extending the _defaults
+	    this.opts = opts;
+	    this.bind();
 	  }
 
 	  /**
-	   * Callback triggered on scroll
-	   * @param   { Number } scrollTop - page offset top
+	   * Bind the instance events setting all the callbacks
 	   * @returns { Object } - Parallax
 	   */
 
 	  _createClass(Parallax, [{
+	    key: 'bind',
+	    value: function bind() {
+	      var _this = this;
+
+	      stage.on('resize', function () {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	          args[_key] = arguments[_key];
+	        }
+
+	        return _this.onResize.apply(_this, args);
+	      });
+	      stage.on('scroll', function () {
+	        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	          args[_key2] = arguments[_key2];
+	        }
+
+	        return _this.onScroll.apply(_this, args);
+	      });
+	      this.canvases.forEach(function (canvas) {
+	        canvas.one('loaded', function () {
+	          return _this.onCanvasLoaded(canvas);
+	        });
+	      });
+
+	      return this;
+	    }
+
+	    /**
+	     * Callback triggered once a canvas has loaded its image
+	     * @param   { Object } canvas - canvas instance
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
+	    key: 'onCanvasLoaded',
+	    value: function onCanvasLoaded(canvas) {
+	      this.trigger('image:loaded', canvas.img);
+	      this.imagesLoaded++;
+	      canvas.draw(stage);
+	      if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded');
+	      return this;
+	    }
+
+	    /**
+	     * Callback triggered on scroll
+	     * @param   { Number } scrollTop - page offset top
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
 	    key: 'onScroll',
 	    value: function onScroll(scrollTop) {
-	      console.log(scrollTop);
+	      var i = this.canvases.length;
+
+	      while (i--) {
+
+	        var canvas = this.canvases[i];
+
+	        if (!canvas.isLoaded) return;
+	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
+	      }
+
 	      return this;
 	    }
 
@@ -134,7 +190,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onResize',
 	    value: function onResize(size) {
+	      var i = this.canvases.length;
+
+	      while (i--) {
+	        var canvas = this.canvases[i];
+	        if (!canvas.isLoaded) return;
+	        canvas.update().draw(stage);
+	      }
 	      return this;
+	    }
+
+	    /**
+	     * Set the canvases instances
+	     * @param   { Array } els - list of the images we want to parallax
+	     * @returns { Array } - list of canvas instances
+	     */
+	  }, {
+	    key: 'createCanvases',
+	    value: function createCanvases(els) {
+	      return els.map(function (el) {
+	        return new _Canvas2['default'](el);
+	      });
+	    }
+
+	    /**
+	     * The options will be always set extending the script _defaults
+	     * @param   { Object } opts - custom options
+	     */
+	  }, {
+	    key: 'opts',
+	    set: function set(opts) {
+	      this._defaults = {
+	        offsetYBounds: 50
+	      };
+	      (0, _helpersHelpers.extend)(this._defaults, opts);
+	    },
+
+	    /**
+	     * Get the script options object
+	     * @returns { Object } - current options
+	     */
+	    get: function get() {
+	      return this._defaults;
 	    }
 	  }]);
 
@@ -157,7 +254,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports["default"] = {};
+	exports["default"] = {
+	  /**
+	   * Shorter and fast way to select multiple nodes in the DOM
+	   * @param   { String } selector - DOM selector
+	   * @param   { Object } ctx - DOM node where the targets of our search will is located
+	   * @returns { Object } dom nodes found
+	   */
+	  $$: function $$(selector, ctx) {
+	    return Array.prototype.slice.call((ctx || document).querySelectorAll(selector));
+	  },
+
+	  /**
+	   * Shorter and fast way to select a single node in the DOM
+	   * @param   { String } selector - unique dom selector
+	   * @param   { Object } ctx - DOM node where the target of our search will is located
+	   * @returns { Object } dom node found
+	   */
+	  $: function $(selector, ctx) {
+	    return (ctx || document).querySelector(selector);
+	  },
+	  /**
+	   * Extend any object with other properties
+	   * @param   { Object } src - source object
+	   * @returns { Object } the resulting extended object
+	   *
+	   * var obj = { foo: 'baz' }
+	   * extend(obj, {bar: 'bar', foo: 'bar'})
+	   * console.log(obj) => {bar: 'bar', foo: 'bar'}
+	   *
+	   */
+	  extend: function extend(src) {
+	    var obj,
+	        args = arguments;
+	    for (var i = 1; i < args.length; ++i) {
+	      if (obj = args[i]) {
+	        for (var key in obj) {
+	          // eslint-disable-line guard-for-in
+	          src[key] = obj[key];
+	        }
+	      }
+	    }
+	    return src;
+	  }
+	};
 	module.exports = exports["default"];
 
 /***/ },
@@ -194,14 +334,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _classCallCheck(this, Stage);
 
 	    // make this object observable
-	    observable(this);
+	    (0, _riotObservable2['default'])(this);
 	    this.tick = false;
 	    this.resizeTimer = null;
 	    this.bind();
 	  }
 
 	  /**
-	   * Bind the window on scroll
+	   * Bind the window events
 	   * @returns { Object } - Stage
 	   */
 
@@ -436,25 +576,166 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _riotObservable2 = _interopRequireDefault(_riotObservable);
 
-	var Wrapper = (function () {
-	  function Wrapper(el) {
-	    _classCallCheck(this, Wrapper);
+	var Canvas = (function () {
+	  function Canvas(img) {
+	    _classCallCheck(this, Canvas);
 
-	    this.el = el;
+	    // make this object observable
 	    (0, _riotObservable2['default'])(this);
+	    this.img = img;
+	    this.el = document.createElement('canvas');
+	    this.c = this.el.getContext('2d');
+	    this.wrapper = img.parentNode;
+	    this.isLoaded = false;
+	    this.bind();
 	  }
 
-	  _createClass(Wrapper, [{
-	    key: 'el',
-	    set: function set(el) {
-	      return typeof el == 'string' ? document.querySelectorAll(el) : el;
+	  /**
+	   * Bind the instance events setting all the callbacks
+	   * @returns { Object } - Canvas
+	   */
+
+	  _createClass(Canvas, [{
+	    key: 'bind',
+	    value: function bind() {
+
+	      if (!this.img.width || !this.img.width || !this.img.loaded) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
+
+	      return this;
+	    }
+
+	    /**
+	     * Callback triggered when the image gets loaded
+	     * @returns { Object } - Canvas
+	     */
+	  }, {
+	    key: 'onImageLoaded',
+	    value: function onImageLoaded() {
+	      this.isLoaded = true;
+	      // replace the image with the canvas
+	      this.wrapper.replaceChild(this.el, this.img);
+	      this.update();
+	      this.trigger('loaded', this.img);
+	      return this;
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update() {
+	      this.el.width = this.size.width;
+	      this.el.height = this.size.height;
+	      return this;
+	    }
+
+	    /**
+	     * Draw the image on the canvas
+	     * @returns { Object } - Canvas
+	     */
+	  }, {
+	    key: 'draw',
+	    value: function draw(stage) {
+	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height;
+	      this.c.clearRect(0, 0, this.el.width, this.el.height);
+	      this.drawImageProp(this.c, this.img, 0, 0, this.el.width, this.el.height, 0, offsetY);
+	      return this;
+	    }
+	  }, {
+	    key: 'drawImageProp',
+	    value: function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+
+	      if (arguments.length === 2) {
+	        x = y = 0;
+	        w = ctx.canvas.width;
+	        h = ctx.canvas.height;
+	      }
+
+	      /// default offset is center
+	      offsetX = offsetX ? offsetX : 0.5;
+	      offsetY = offsetY ? offsetY : 0.5;
+
+	      /// keep bounds [0.0, 1.0]
+	      if (offsetX < 0) offsetX = 0;
+	      if (offsetY < 0) offsetY = 0;
+	      if (offsetX > 1) offsetX = 1;
+	      if (offsetY > 1) offsetY = 1;
+
+	      var iw = img.width || img.videoWidth,
+	          ih = img.height || img.videoHeight,
+	          r = Math.min(w / iw, h / ih),
+	          nw = iw * r,
+	          /// new prop. width
+	      nh = ih * r,
+	          /// new prop. height
+	      cx,
+	          cy,
+	          cw,
+	          ch,
+	          ar = 1;
+
+	      /// decide which gap to fill
+	      if (nw < w) ar = w / nw;
+	      if (nh < h) ar = h / nh;
+	      nw *= ar;
+	      nh *= ar;
+
+	      /// calc source rectangle
+	      cw = iw / (nw / w);
+	      ch = ih / (nh / h);
+
+	      cx = (iw - cw) * offsetX;
+	      cy = (ih - ch) * offsetY;
+
+	      /// make sure source rectangle is valid
+	      if (cx < 0) cx = 0;
+	      if (cy < 0) cy = 0;
+	      if (cw > iw) cw = iw;
+	      if (ch > ih) ch = ih;
+	      /// fill image in dest. rectangle
+	      ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h);
+	    }
+
+	    /**
+	     * Get the parent wrapper bounds
+	     * @returns { Object } - parent tag bounds properties
+	     */
+	  }, {
+	    key: 'bounds',
+	    get: function get() {
+	      return this.wrapper.getBoundingClientRect();
+	    }
+
+	    /**
+	     * Get the parent wrapper offset
+	     * @returns { Object } - top and left position of the image parent tag
+	     */
+	  }, {
+	    key: 'offset',
+	    get: function get() {
+	      var props = this.bounds;
+	      return {
+	        top: props.top,
+	        left: props.left
+	      };
+	    }
+
+	    /**
+	     * Get the parent wrapper size
+	     * @returns { Object } - the height and the width of the image parent tag
+	     */
+	  }, {
+	    key: 'size',
+	    get: function get() {
+	      var props = this.bounds;
+	      return {
+	        height: props.height,
+	        width: props.width
+	      };
 	    }
 	  }]);
 
-	  return Wrapper;
+	  return Canvas;
 	})();
 
-	exports['default'] = Wrapper;
+	exports['default'] = Canvas;
 	module.exports = exports['default'];
 
 /***/ }
