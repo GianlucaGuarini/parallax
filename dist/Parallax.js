@@ -365,13 +365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function bind() {
 	      var _this = this;
 
-	      window.addEventListener('mousewheel', function () {
-	        return _this.scroll();
-	      }, true);
 	      window.addEventListener('scroll', function () {
-	        return _this.scroll();
-	      }, true);
-	      window.addEventListener('touchmove', function () {
 	        return _this.scroll();
 	      }, true);
 	      window.addEventListener('resize', function () {
@@ -619,6 +613,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _riotObservable2 = _interopRequireDefault(_riotObservable);
 
+	var DEBUG = true;
+
 	var Canvas = (function () {
 	  function Canvas(img, opts) {
 	    _classCallCheck(this, Canvas);
@@ -677,8 +673,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'draw',
 	    value: function draw(stage) {
 	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height;
-	      this.c.clearRect(0, 0, this.el.width, this.el.height);
-	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY * this.opts.intensity);
+
+	      //this.c.clearRect(0, 0, this.el.width, this.el.height)
+	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0.5, offsetY * this.opts.intensity);
 	      return this;
 	    }
 	  }, {
@@ -729,6 +726,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      /// fill image in dest. rectangle
 	      ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h);
+
+	      if (DEBUG) {
+	        ctx.font = '16px Arial';
+	        ctx.fillText('cy=' + cy, 10, 50);
+	        ctx.fillText('ch=' + ch, 10, 70);
+	        ctx.fillText('offsetY=' + offsetY, 10, 90);
+	      }
 	    }
 
 	    /**

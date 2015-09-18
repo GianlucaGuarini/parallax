@@ -4,6 +4,8 @@
 
 import o from 'riot-observable'
 
+const DEBUG = true
+
 export default class Canvas {
   constructor(img, opts) {
     // make this object observable
@@ -50,8 +52,9 @@ export default class Canvas {
    */
   draw(stage) {
     var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height
-    this.c.clearRect(0, 0, this.el.width, this.el.height)
-    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY * this.opts.intensity)
+
+    //this.c.clearRect(0, 0, this.el.width, this.el.height)
+    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0.5, offsetY * this.opts.intensity)
     return this
   }
   drawImageProp(ctx, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
@@ -61,6 +64,7 @@ export default class Canvas {
       w = ctx.canvas.width
       h = ctx.canvas.height
     }
+
 
     var iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
@@ -92,6 +96,14 @@ export default class Canvas {
 
     /// fill image in dest. rectangle
     ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h)
+
+    if (DEBUG) {
+      ctx.font = '16px Arial'
+      ctx.fillText(`cy=${cy}`, 10, 50)
+      ctx.fillText(`ch=${ch}`, 10, 70)
+      ctx.fillText(`offsetY=${offsetY}`, 10, 90)
+    }
+
   }
   /**
    * Get the parent wrapper bounds

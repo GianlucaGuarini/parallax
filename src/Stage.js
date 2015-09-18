@@ -28,9 +28,7 @@ export default class Stage {
    */
   bind() {
 
-    window.addEventListener('mousewheel', () => this.scroll(), true)
     window.addEventListener('scroll',  () => this.scroll(), true)
-    window.addEventListener('touchmove',  () => this.scroll(), true)
     window.addEventListener('resize', () => this.resize(), true)
     window.addEventListener('orientationchange', () => this.resize(), true)
     window.onload = () => this.update(true) // force an update event
