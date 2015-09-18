@@ -100,6 +100,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // make this object observable
 	    (0, _riotObservable2['default'])(this);
+	    // set the options extending the _defaults
+	    this.opts = opts;
 	    this.canvases = this.createCanvases(typeof els == 'string' ? (0, _helpersHelpers.$$)(els) : els);
 	    this.imagesLoaded = 0;
 
@@ -107,9 +109,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      console.warn('No images were found with the selector "' + els + '"');
 	      return;
 	    }
-
-	    // set the options extending the _defaults
-	    this.opts = opts;
 	    this.bind();
 	  }
 
@@ -175,10 +174,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var canvas = this.canvases[i];
 
-	        if (!canvas.isLoaded) return;
-	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) {
-	          canvas.draw(stage);
-	        }
+	        if (!canvas.isLoaded) return this;
+
+	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
 	      }
 
 	      return this;
@@ -210,8 +208,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'createCanvases',
 	    value: function createCanvases(els) {
+	      var _this2 = this;
+
 	      return els.map(function (el) {
-	        return new _Canvas2['default'](el);
+	        return new _Canvas2['default'](el, {
+	          intensity: _this2.opts.intensity
+	        });
 	      });
 	    }
 
@@ -223,7 +225,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'opts',
 	    set: function set(opts) {
 	      this._defaults = {
-	        offsetYBounds: 50
+	        offsetYBounds: 200,
+	        intensity: 0.3
 	      };
 	      (0, _helpersHelpers.extend)(this._defaults, opts);
 	    },
@@ -337,8 +340,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // make this object observable
 	    (0, _riotObservable2['default'])(this);
-	    this.tick = false;
+	    this.isScrolling = false;
 	    this.resizeTimer = null;
+	    this.oldScrollTop = this.scrollTop;
 	    this.bind();
 	  }
 
@@ -364,6 +368,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      window.addEventListener('orientationchange', function () {
 	        return _this.resize();
 	      }, true);
+	      window.onload = function () {
+	        return _this.update(true);
+	      }; // force an update event
 
 	      return this;
 	    }
@@ -375,15 +382,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'scroll',
 	    value: function scroll() {
+	      if (this.isScrolling) return this;
+	      this.isScrolling = true;
+	      this.update();
+	      return this;
+	    }
+
+	    /**
+	     * Update function that is called anytime we need to trigger an update
+	     * @returns { Object } - Stage
+	     */
+	  }, {
+	    key: 'update',
+	    value: function update() {
 	      var _this2 = this;
 
-	      if (!this.tick) {
-	        this.tick = !this.tick;
-	        rAF(function () {
-	          _this2.trigger('scroll', _this2.scrollTop);
-	          _this2.tick = !_this2.tick;
-	        });
+	      var force = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+	      if (!this.isScrolling && !force) return this;
+
+	      this.trigger('scroll', this.scrollTop);
+
+	      if (this.scrollTop == this.oldScrollTop) {
+	        this.isScrolling = false;
 	      }
+
+	      this.oldScrollTop = this.scrollTop;
+
+	      rAF(function () {
+	        return _this2.update();
+	      });
+
 	      return this;
 	    }
 
@@ -579,11 +608,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _riotObservable2 = _interopRequireDefault(_riotObservable);
 
 	var Canvas = (function () {
-	  function Canvas(img) {
+	  function Canvas(img, opts) {
 	    _classCallCheck(this, Canvas);
 
 	    // make this object observable
 	    (0, _riotObservable2['default'])(this);
+	    this.opts = opts;
 	    this.img = img;
 	    this.el = document.createElement('canvas');
 	    this.c = this.el.getContext('2d');
@@ -601,7 +631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'bind',
 	    value: function bind() {
 
-	      if (!this.img.width || !this.img.width || !this.img.loaded) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
+	      if (!this.img.width || !this.img.width) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
 
 	      return this;
 	    }
@@ -637,7 +667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function draw(stage) {
 	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height;
 	      this.c.clearRect(0, 0, this.el.width, this.el.height);
-	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY);
+	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY * this.opts.intensity);
 	      return this;
 	    }
 	  }, {
@@ -653,12 +683,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      /// default offset is center
 	      offsetX = offsetX ? offsetX : 0.5;
 	      offsetY = offsetY ? offsetY : 0.5;
-
-	      /// keep bounds [0.0, 1.0]
-	      if (offsetX < 0) offsetX = 0;
-	      if (offsetY < 0) offsetY = 0;
-	      if (offsetX > 1) offsetX = 1;
-	      if (offsetY > 1) offsetY = 1;
 
 	      var iw = this.img.naturalWidth || this.img.width,
 	          ih = this.img.naturalHeight || this.img.height,
@@ -680,17 +704,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nh *= ar;
 
 	      /// calc source rectangle
-	      cw = iw / (nw / w);
-	      ch = ih / (nh / h);
+	      cw = ~ ~(iw / (nw / w));
+	      ch = ~ ~(ih / (nh / h));
 
-	      cx = (iw - cw) * offsetX;
-	      cy = (ih - ch) * offsetY;
+	      cx = ~ ~((iw - cw) * offsetX);
+	      cy = ~ ~((ih - ch) * offsetY);
 
 	      /// make sure source rectangle is valid
 	      if (cx < 0) cx = 0;
 	      if (cy < 0) cy = 0;
 	      if (cw > iw) cw = iw;
 	      if (ch > ih) ch = ih;
+
 	      /// fill image in dest. rectangle
 	      ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h);
 	    }

@@ -18,6 +18,8 @@ class Parallax {
   constructor(els, opts = {}) {
     // make this object observable
     o(this)
+    // set the options extending the _defaults
+    this.opts = opts
     this.canvases = this.createCanvases(typeof els == 'string' ? $$(els) : els)
     this.imagesLoaded = 0
 
@@ -25,9 +27,6 @@ class Parallax {
       console.warn(`No images were found with the selector "${els}"`)
       return
     }
-
-    // set the options extending the _defaults
-    this.opts = opts
     this.bind()
 
   }
@@ -69,13 +68,13 @@ class Parallax {
 
       var canvas = this.canvases[i]
 
-      if (!canvas.isLoaded) return
+      if (!canvas.isLoaded) return this
+
       if (
         stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top &&
         stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height
-      ) {
-        canvas.draw(stage)
-      }
+      ) canvas.draw(stage)
+
     }
 
     return this
@@ -101,7 +100,9 @@ class Parallax {
    * @returns { Array } - list of canvas instances
    */
   createCanvases(els) {
-    return els.map(el => new Canvas(el))
+    return els.map(el => new Canvas(el, {
+      intensity: this.opts.intensity
+    }))
   }
   /**
    * The options will be always set extending the script _defaults
@@ -109,7 +110,8 @@ class Parallax {
    */
   set opts (opts) {
     this._defaults = {
-      offsetYBounds: 50
+      offsetYBounds: 200,
+      intensity: 0.3
     }
     extend(this._defaults, opts)
   }

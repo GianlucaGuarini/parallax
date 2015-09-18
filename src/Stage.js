@@ -17,8 +17,9 @@ export default class Stage {
   constructor() {
     // make this object observable
     o(this)
-    this.tick = false
+    this.isScrolling = false
     this.resizeTimer = null
+    this.oldScrollTop = this.scrollTop
     this.bind()
   }
   /**
@@ -31,21 +32,39 @@ export default class Stage {
     window.addEventListener('scroll',  (e) => this.scroll(e), true)
     window.addEventListener('resize', () => this.resize(), true)
     window.addEventListener('orientationchange', () => this.resize(), true)
+    window.onload = () => this.update(true) // force an update event
 
     return this
   }
+
   /**
    * Handle a smooth scroll event dispatching the scrolling event outside
    * @returns { Object } - Stage
    */
   scroll() {
-    if (!this.tick) {
-      this.tick = !this.tick
-      rAF(() => {
-        this.trigger('scroll', this.scrollTop)
-        this.tick = !this.tick
-      })
+    if (this.isScrolling) return this
+    this.isScrolling = true
+    this.update()
+    return this
+  }
+  /**
+   * Update function that is called anytime we need to trigger an update
+   * @returns { Object } - Stage
+   */
+  update(force = false) {
+
+    if (!this.isScrolling && !force) return this
+
+    this.trigger('scroll', this.scrollTop)
+
+    if (this.scrollTop == this.oldScrollTop) {
+      this.isScrolling = false
     }
+
+    this.oldScrollTop = this.scrollTop
+
+    rAF(() => this.update())
+
     return this
   }
   /**

@@ -5,9 +5,10 @@
 import o from 'riot-observable'
 
 export default class Canvas {
-  constructor(img) {
+  constructor(img, opts) {
     // make this object observable
     o(this)
+    this.opts = opts
     this.img = img
     this.el = document.createElement('canvas')
     this.c = this.el.getContext('2d')
@@ -21,7 +22,7 @@ export default class Canvas {
    */
   bind() {
 
-    if (!this.img.width || !this.img.width || !this.img.loaded)
+    if (!this.img.width || !this.img.width)
       this.img.onload = this.onImageLoaded.bind(this)
     else this.onImageLoaded()
 
@@ -51,7 +52,7 @@ export default class Canvas {
   draw(stage) {
     var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height
     this.c.clearRect(0, 0, this.el.width, this.el.height)
-    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY)
+    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY * this.opts.intensity)
     return this
   }
   drawImageProp(ctx, x, y, w, h, offsetX, offsetY) {
@@ -66,11 +67,6 @@ export default class Canvas {
     offsetX = offsetX ? offsetX : 0.5
     offsetY = offsetY ? offsetY : 0.5
 
-    /// keep bounds [0.0, 1.0]
-    if (offsetX < 0) offsetX = 0
-    if (offsetY < 0) offsetY = 0
-    if (offsetX > 1) offsetX = 1
-    if (offsetY > 1) offsetY = 1
 
 
     var iw = this.img.naturalWidth || this.img.width,
@@ -87,17 +83,18 @@ export default class Canvas {
     nh *= ar
 
     /// calc source rectangle
-    cw = iw / (nw / w)
-    ch = ih / (nh / h)
+    cw = ~~(iw / (nw / w))
+    ch = ~~(ih / (nh / h))
 
-    cx = (iw - cw) * offsetX
-    cy = (ih - ch) * offsetY
+    cx = ~~((iw - cw) * offsetX)
+    cy = ~~((ih - ch) * offsetY)
 
     /// make sure source rectangle is valid
     if (cx < 0) cx = 0
     if (cy < 0) cy = 0
     if (cw > iw) cw = iw
     if (ch > ih) ch = ih
+
     /// fill image in dest. rectangle
     ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h)
   }
