@@ -51,10 +51,10 @@ export default class Canvas {
   draw(stage) {
     var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height
     this.c.clearRect(0, 0, this.el.width, this.el.height)
-    this.drawImageProp(this.c, this.img, 0, 0, this.el.width, this.el.height, 0, offsetY)
+    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY)
     return this
   }
-  drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+  drawImageProp(ctx, x, y, w, h, offsetX, offsetY) {
 
     if (arguments.length === 2) {
       x = y = 0
@@ -73,8 +73,8 @@ export default class Canvas {
     if (offsetY > 1) offsetY = 1
 
 
-    var iw =img.width || img.videoWidth,
-      ih = img.height || img.videoHeight,
+    var iw = this.img.naturalWidth || this.img.width,
+      ih = this.img.naturalHeight || this.img.height,
       r = Math.min(w / iw, h / ih),
       nw = iw * r, /// new prop. width
       nh = ih * r, /// new prop. height
@@ -99,7 +99,7 @@ export default class Canvas {
     if (cw > iw) cw = iw
     if (ch > ih) ch = ih
     /// fill image in dest. rectangle
-    ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h)
+    ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h)
   }
   /**
    * Get the parent wrapper bounds
@@ -113,10 +113,9 @@ export default class Canvas {
    * @returns { Object } - top and left position of the image parent tag
    */
   get offset() {
-    var props = this.bounds
     return {
-      top: props.top,
-      left: props.left
+      top: this.wrapper.offsetTop,
+      left: this.wrapper.offsetLeft
     }
   }
   /**

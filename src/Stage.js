@@ -11,7 +11,7 @@ const
     window.msRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
     function (cb) { setTimeout(cb, 1000 / 60) },
-  RESIZE_DELAY = 200
+  RESIZE_DELAY = 20
 
 export default class Stage {
   constructor() {

@@ -176,7 +176,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var canvas = this.canvases[i];
 
 	        if (!canvas.isLoaded) return;
-	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
+	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) {
+	          canvas.draw(stage);
+	        }
 	      }
 
 	      return this;
@@ -327,7 +329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame || function (cb) {
 	  setTimeout(cb, 1000 / 60);
 	},
-	    RESIZE_DELAY = 200;
+	    RESIZE_DELAY = 20;
 
 	var Stage = (function () {
 	  function Stage() {
@@ -635,12 +637,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function draw(stage) {
 	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height;
 	      this.c.clearRect(0, 0, this.el.width, this.el.height);
-	      this.drawImageProp(this.c, this.img, 0, 0, this.el.width, this.el.height, 0, offsetY);
+	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0, offsetY);
 	      return this;
 	    }
 	  }, {
 	    key: 'drawImageProp',
-	    value: function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
+	    value: function drawImageProp(ctx, x, y, w, h, offsetX, offsetY) {
 
 	      if (arguments.length === 2) {
 	        x = y = 0;
@@ -658,8 +660,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (offsetX > 1) offsetX = 1;
 	      if (offsetY > 1) offsetY = 1;
 
-	      var iw = img.width || img.videoWidth,
-	          ih = img.height || img.videoHeight,
+	      var iw = this.img.naturalWidth || this.img.width,
+	          ih = this.img.naturalHeight || this.img.height,
 	          r = Math.min(w / iw, h / ih),
 	          nw = iw * r,
 	          /// new prop. width
@@ -690,7 +692,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (cw > iw) cw = iw;
 	      if (ch > ih) ch = ih;
 	      /// fill image in dest. rectangle
-	      ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h);
+	      ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h);
 	    }
 
 	    /**
@@ -710,10 +712,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'offset',
 	    get: function get() {
-	      var props = this.bounds;
 	      return {
-	        top: props.top,
-	        left: props.left
+	        top: this.wrapper.offsetTop,
+	        left: this.wrapper.offsetLeft
 	      };
 	    }
 
