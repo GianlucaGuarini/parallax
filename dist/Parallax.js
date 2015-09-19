@@ -185,7 +185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (!canvas.isLoaded) return this;
 
-	        if (stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top && stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
+	        if (stage.scrollTop + stage.size.height >= canvas.offset.top && stage.scrollTop <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
 	      }
 
 	      return this;
@@ -234,8 +234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'opts',
 	    set: function set(opts) {
 	      this._defaults = {
-	        offsetYBounds: 200,
-	        intensity: 0.8
+	        intensity: 0.5
 	      };
 	      (0, _helpersHelpers.extend)(this._defaults, opts);
 	    },
@@ -263,12 +262,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @module hepers
 	 * All the helper functions needed in this project
 	 */
-	"use strict";
+	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
+	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
-	exports["default"] = {
+	exports['default'] = {
 	  /**
 	   * Shorter and fast way to select multiple nodes in the DOM
 	   * @param   { String } selector - DOM selector
@@ -304,15 +303,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	    for (var i = 1; i < args.length; ++i) {
 	      if (obj = args[i]) {
 	        for (var key in obj) {
-	          // eslint-disable-line guard-for-in
 	          src[key] = obj[key];
 	        }
 	      }
 	    }
 	    return src;
+	  },
+	  /**
+	   * Prefix any fancy browser object property
+	   * @param   { Object } obj - object we want to update normally el.style
+	   * @param   { String } prop - the new object property we want to set
+	   * @param   { * } value - new value we want to assign to the prefixed property
+	   * @returns { undefined }
+	   */
+	  prefix: function prefix(obj, prop, value) {
+	    var pre = ['', 'webkit', 'Moz', 'o', 'ms'];
+	    for (var p in pre) {
+	      // check if the prefix exists othewise we will use the unprefixed version
+	      // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
+	      p = pre[p] ? pre[prop[0].toUpperCase() + prop.substr(1)] + prop : prop[0].toLowerCase() + prop.substr(1);
+	      if (p in obj) {
+	        obj[prefs[pref] + prop] = value;
+	        return;
+	      }
+	    }
 	  }
 	};
-	module.exports = exports["default"];
+	module.exports = exports['default'];
 
 /***/ },
 /* 2 */
@@ -349,9 +366,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // make this object observable
 	    (0, _riotObservable2['default'])(this);
-	    this.isScrolling = false;
 	    this.resizeTimer = null;
-	    this.oldScrollTop = this.scrollTop;
+	    this.tick = false;
 	    this.bind();
 	  }
 
@@ -368,6 +384,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      window.addEventListener('scroll', function () {
 	        return _this.scroll();
 	      }, true);
+	      window.addEventListener('mousewheel', function () {
+	        return _this.scroll();
+	      }, true);
 	      window.addEventListener('resize', function () {
 	        return _this.resize();
 	      }, true);
@@ -375,7 +394,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this.resize();
 	      }, true);
 	      window.onload = function () {
-	        return _this.update(true);
+	        return _this.scroll();
 	      }; // force an update event
 
 	      return this;
@@ -388,9 +407,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'scroll',
 	    value: function scroll() {
-	      if (this.isScrolling) return this;
-	      this.isScrolling = true;
-	      this.update();
+	      var _this2 = this;
+
+	      if (this.tick) return this;
+	      this.tick = !this.tick;
+	      rAF(function () {
+	        return _this2.update();
+	      });
 	      return this;
 	    }
 
@@ -401,24 +424,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'update',
 	    value: function update() {
-	      var _this2 = this;
-
-	      var force = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
-
-	      if (!this.isScrolling && !force) return this;
-
 	      this.trigger('scroll', this.scrollTop);
-
-	      if (this.scrollTop == this.oldScrollTop) {
-	        this.isScrolling = false;
-	      }
-
-	      this.oldScrollTop = this.scrollTop;
-
-	      rAF(function () {
-	        return _this2.update();
-	      });
-
+	      this.tick = !this.tick;
 	      return this;
 	    }
 
@@ -609,11 +616,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+	var _helpersHelpers = __webpack_require__(1);
+
 	var _riotObservable = __webpack_require__(3);
 
 	var _riotObservable2 = _interopRequireDefault(_riotObservable);
-
-	var DEBUG = true;
 
 	var Canvas = (function () {
 	  function Canvas(img, opts) {
@@ -672,10 +679,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'draw',
 	    value: function draw(stage) {
-	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height;
+	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height * this.opts.intensity,
+	          translateY = this.offset.top - stage.scrollTop,
+	          x = 0,
+	          y = translateY < 0 ? -translateY * this.opts.intensity : 0;
 
-	      //this.c.clearRect(0, 0, this.el.width, this.el.height)
-	      this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0.5, offsetY * this.opts.intensity);
+	      this.drawImageProp(this.c, x, y, this.el.width, this.el.height, 0.5, offsetY);
+
 	      return this;
 	    }
 	  }, {
@@ -689,6 +699,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        w = ctx.canvas.width;
 	        h = ctx.canvas.height;
 	      }
+
+	      /// keep bounds [0.0, 1.0]
+	      if (offsetX < 0) offsetX = 0;
+	      if (offsetY < 0) offsetY = 0;
+	      if (offsetX > 1) offsetX = 1;
+	      if (offsetY > 1) offsetY = 1;
 
 	      var iw = this.img.naturalWidth || this.img.width,
 	          ih = this.img.naturalHeight || this.img.height,
@@ -717,8 +733,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      cy = (ih - ch) * offsetY;
 
 	      /// make sure source rectangle is valid
-	      if (cx < 0) x = -cx;
-	      if (cy < 0) y = -cy;
 	      if (cx < 0) cx = 0;
 	      if (cy < 0) cy = 0;
 	      if (cw > iw) cw = iw;
@@ -726,13 +740,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      /// fill image in dest. rectangle
 	      ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h);
-
-	      if (DEBUG) {
-	        ctx.font = '16px Arial';
-	        ctx.fillText('cy=' + cy, 10, 50);
-	        ctx.fillText('ch=' + ch, 10, 70);
-	        ctx.fillText('offsetY=' + offsetY, 10, 90);
-	      }
 	    }
 
 	    /**

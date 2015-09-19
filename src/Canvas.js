@@ -2,9 +2,8 @@
  * This class will manage the parallax container
  */
 
+import { prefix } from './helpers/helpers'
 import o from 'riot-observable'
-
-const DEBUG = true
 
 export default class Canvas {
   constructor(img, opts) {
@@ -51,10 +50,13 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   draw(stage) {
-    var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height
+    var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height * this.opts.intensity,
+      translateY = this.offset.top - stage.scrollTop,
+      x = 0,
+      y = translateY < 0 ? -translateY * this.opts.intensity : 0
 
-    //this.c.clearRect(0, 0, this.el.width, this.el.height)
-    this.drawImageProp(this.c, 0, 0, this.el.width, this.el.height, 0.5, offsetY * this.opts.intensity)
+    this.drawImageProp(this.c, x, y, this.el.width, this.el.height, 0.5, offsetY)
+
     return this
   }
   drawImageProp(ctx, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
@@ -65,6 +67,11 @@ export default class Canvas {
       h = ctx.canvas.height
     }
 
+    /// keep bounds [0.0, 1.0]
+    if (offsetX < 0) offsetX = 0
+    if (offsetY < 0) offsetY = 0
+    if (offsetX > 1) offsetX = 1
+    if (offsetY > 1) offsetY = 1
 
     var iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
@@ -87,8 +94,6 @@ export default class Canvas {
     cy = (ih - ch) * offsetY
 
     /// make sure source rectangle is valid
-    if (cx < 0) x = -cx
-    if (cy < 0) y = -cy
     if (cx < 0) cx = 0
     if (cy < 0) cy = 0
     if (cw > iw) cw = iw
@@ -96,13 +101,6 @@ export default class Canvas {
 
     /// fill image in dest. rectangle
     ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h)
-
-    if (DEBUG) {
-      ctx.font = '16px Arial'
-      ctx.fillText(`cy=${cy}`, 10, 50)
-      ctx.fillText(`ch=${ch}`, 10, 70)
-      ctx.fillText(`offsetY=${offsetY}`, 10, 90)
-    }
 
   }
   /**

@@ -76,8 +76,8 @@ class Parallax {
       if (!canvas.isLoaded) return this
 
       if (
-        stage.scrollTop + stage.size.height + this.opts.offsetYBounds >= canvas.offset.top &&
-        stage.scrollTop - this.opts.offsetYBounds <= canvas.offset.top + canvas.size.height
+        stage.scrollTop + stage.size.height >= canvas.offset.top &&
+        stage.scrollTop <= canvas.offset.top + canvas.size.height
       ) canvas.draw(stage)
 
     }
@@ -115,8 +115,7 @@ class Parallax {
    */
   set opts (opts) {
     this._defaults = {
-      offsetYBounds: 200,
-      intensity: 0.8
+      intensity: 0.5
     }
     extend(this._defaults, opts)
   }

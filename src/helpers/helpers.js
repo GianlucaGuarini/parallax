@@ -36,11 +36,30 @@ export default {
     var obj, args = arguments
     for (var i = 1; i < args.length; ++i) {
       if (obj = args[i]) {
-        for (var key in obj) {      // eslint-disable-line guard-for-in
+        for (var key in obj) {
           src[key] = obj[key]
         }
       }
     }
     return src
+  },
+  /**
+   * Prefix any fancy browser object property
+   * @param   { Object } obj - object we want to update normally el.style
+   * @param   { String } prop - the new object property we want to set
+   * @param   { * } value - new value we want to assign to the prefixed property
+   * @returns { undefined }
+   */
+  prefix(obj, prop, value) {
+    var pre = ['', 'webkit', 'Moz', 'o', 'ms']
+    for (var p in pre) {
+      // check if the prefix exists othewise we will use the unprefixed version
+      // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
+      p = pre[p] ? pre[prop[0].toUpperCase() + prop.substr(1)] + prop : prop[0].toLowerCase() + prop.substr(1)
+      if (p in obj) {
+        obj[prefs[pref] + prop] = value
+        return
+      }
+    }
   }
 }
