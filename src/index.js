@@ -71,13 +71,17 @@ class Parallax {
 
     while (i--) {
 
-      var canvas = this.canvases[i]
-
-      if (!canvas.isLoaded) return this
+      var canvas = this.canvases[i],
+        stageScrollTop = stage.scrollTop,
+        canvasHeight = canvas.size.height,
+        offsetYBounds = this.opts.offsetYBounds,
+        canvasOffset = canvas.offset,
+        canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop
 
       if (
-        stage.scrollTop + stage.size.height >= canvas.offset.top &&
-        stage.scrollTop <= canvas.offset.top + canvas.size.height
+        canvas.isLoaded &&
+        canvasScrollDelta + offsetYBounds > 0 &&
+        canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height
       ) canvas.draw(stage)
 
     }
@@ -106,7 +110,7 @@ class Parallax {
    */
   createCanvases(els) {
     return els.map(el => new Canvas(el, {
-      intensity: this.opts.intensity
+      intensity: el.dataset.intensity || this.opts.intensity
     }))
   }
   /**
@@ -115,7 +119,8 @@ class Parallax {
    */
   set opts (opts) {
     this._defaults = {
-      intensity: 0.5
+      offsetYBounds: 50,
+      intensity: 30
     }
     extend(this._defaults, opts)
   }

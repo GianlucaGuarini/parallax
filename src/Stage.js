@@ -74,6 +74,20 @@ export default class Stage {
     return window.isNaN(top) ? 0 : top
   }
   /**
+   * It returns the window height
+   * @returns { Number } - height of the viewport
+   */
+  get height() {
+    return  window.innerHeight
+  }
+  /**
+   * It returns the window width
+   * @returns { Number } - width of the viewport
+   */
+  get width() {
+    return window.innerWidth
+  }
+  /**
    * It returns the window size
    * @returns { Object } - width and height of the viewport
    */

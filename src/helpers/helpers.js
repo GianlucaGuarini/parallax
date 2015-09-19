@@ -51,13 +51,15 @@ export default {
    * @returns { undefined }
    */
   prefix(obj, prop, value) {
-    var pre = ['', 'webkit', 'Moz', 'o', 'ms']
-    for (var p in pre) {
-      // check if the prefix exists othewise we will use the unprefixed version
-      // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
-      p = pre[p] ? pre[prop[0].toUpperCase() + prop.substr(1)] + prop : prop[0].toLowerCase() + prop.substr(1)
+    var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
+      i = prefixes.length
+    while (i--) {
+      var prefix = prefixes[i],
+        // check if the prefix exists othewise we will use the unprefixed version
+        // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
+        p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1)
       if (p in obj) {
-        obj[prefs[pref] + prop] = value
+        obj[p] = value
         return
       }
     }

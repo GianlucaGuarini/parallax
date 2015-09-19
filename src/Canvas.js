@@ -11,8 +11,6 @@ export default class Canvas {
     o(this)
     this.opts = opts
     this.img = img
-    this.el = document.createElement('canvas')
-    this.c = this.el.getContext('2d')
     this.wrapper = img.parentNode
     this.isLoaded = false
   }
@@ -34,15 +32,32 @@ export default class Canvas {
    */
   onImageLoaded() {
     this.isLoaded = true
-    // replace the image with the canvas
-    this.wrapper.replaceChild(this.el, this.img)
     this.update()
     this.trigger('loaded', this.img)
     return this
   }
+  /**
+   * Center the image in its wrapper
+   * @returns { Object } - Canvas
+   */
   update() {
-    this.el.width = this.size.width
-    this.el.height = this.size.height
+
+    var iw = this.img.naturalWidth || this.img.width,
+      ih = this.img.naturalHeight || this.img.height,
+      ratio = iw / ih,
+      size = this.size
+
+    if (size.width / ratio <= size.height) {
+      this.img.height = size.height
+      this.img.width = size.height * ratio
+    } else {
+      this.img.width = size.width
+      this.img.height = size.width / ratio
+    }
+
+    this.img.style.top = `${-~~((this.img.height - size.height) / 2)}px`
+    this.img.style.left = `${-~~((this.img.width - size.width) / 2)}px`
+
     return this
   }
   /**
@@ -50,59 +65,11 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   draw(stage) {
-    var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height * this.opts.intensity,
-      translateY = this.offset.top - stage.scrollTop,
-      x = 0,
-      y = translateY < 0 ? -translateY * this.opts.intensity : 0
-
-    this.drawImageProp(this.c, x, y, this.el.width, this.el.height, 0.5, offsetY)
-
+    var offsetYPerc = (this.offset.top + (this.size.height + stage.height) / 2 - stage.scrollTop) / stage.height - 1
+    prefix(this.img.style, 'transform', `translate3d(0, ${-offsetYPerc * this.opts.intensity}%, 0)`)
     return this
   }
-  drawImageProp(ctx, x, y, w, h, offsetX = 0.5, offsetY = 0.5) {
 
-    if (arguments.length === 2) {
-      x = y = 0
-      w = ctx.canvas.width
-      h = ctx.canvas.height
-    }
-
-    /// keep bounds [0.0, 1.0]
-    if (offsetX < 0) offsetX = 0
-    if (offsetY < 0) offsetY = 0
-    if (offsetX > 1) offsetX = 1
-    if (offsetY > 1) offsetY = 1
-
-    var iw = this.img.naturalWidth || this.img.width,
-      ih = this.img.naturalHeight || this.img.height,
-      r = Math.min(w / iw, h / ih),
-      nw = Math.ceil(iw * r), /// new prop. width
-      nh = Math.ceil(ih * r), /// new prop. height
-      cx, cy, cw, ch, ar = 1
-
-    /// decide which gap to fill
-    if (nw < w) ar = w / nw
-    if (nh < h) ar = h / nh
-    nw *= ar
-    nh *= ar
-
-    /// calc source rectangle
-    cw = iw / (nw / w)
-    ch = ih / (nh / h)
-
-    cx = (iw - cw) * offsetX
-    cy = (ih - ch) * offsetY
-
-    /// make sure source rectangle is valid
-    if (cx < 0) cx = 0
-    if (cy < 0) cy = 0
-    if (cw > iw) cw = iw
-    if (ch > ih) ch = ih
-
-    /// fill image in dest. rectangle
-    ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h)
-
-  }
   /**
    * Get the parent wrapper bounds
    * @returns { Object } - parent tag bounds properties
@@ -127,8 +94,8 @@ export default class Canvas {
   get size() {
     var props = this.bounds
     return {
-      height: Math.ceil(props.height),
-      width: Math.ceil(props.width)
+      height: props.height,
+      width: props.width
     }
   }
 }
