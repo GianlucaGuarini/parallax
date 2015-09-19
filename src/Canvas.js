@@ -20,7 +20,7 @@ export default class Canvas {
    */
   load() {
 
-    if (!this.img.width || !this.img.width)
+    if (!this.img.width || !this.img.width || !this.img.complete)
       this.img.onload = this.onImageLoaded.bind(this)
     else this.onImageLoaded()
 
@@ -65,8 +65,11 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   draw(stage) {
-    var offsetYPerc = (this.offset.top + (this.size.height + stage.height) / 2 - stage.scrollTop) / stage.height - 1
+    var size = this.size,
+      offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1
+
     prefix(this.img.style, 'transform', `translate3d(0, ${-offsetYPerc * this.opts.intensity}%, 0)`)
+
     return this
   }
 
@@ -94,8 +97,8 @@ export default class Canvas {
   get size() {
     var props = this.bounds
     return {
-      height: props.height,
-      width: props.width
+      height: props.height | 0,
+      width: props.width | 0
     }
   }
 }

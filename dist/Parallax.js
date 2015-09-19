@@ -223,8 +223,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this2 = this;
 
 	      return els.map(function (el) {
+	        var data = el.dataset;
 	        return new _Canvas2['default'](el, {
-	          intensity: el.dataset.intensity || _this2.opts.intensity
+	          intensity: typeof data.intensity != 'undefined' ? +data.intensity : _this2.opts.intensity,
+	          center: typeof data.center != 'undefined' ? +data.center : _this2.opts.center
 	        });
 	      });
 	    }
@@ -238,7 +240,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    set: function set(opts) {
 	      this._defaults = {
 	        offsetYBounds: 50,
-	        intensity: 30
+	        intensity: 30,
+	        center: 0.5
 	      };
 	      (0, _helpersHelpers.extend)(this._defaults, opts);
 	    },
@@ -394,6 +397,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      window.addEventListener('mousewheel', function () {
 	        return _this.scroll();
 	      }, true);
+	      window.addEventListener('touchmove', function () {
+	        return _this.scroll();
+	      }, true);
 	      window.addEventListener('resize', function () {
 	        return _this.resize();
 	      }, true);
@@ -491,8 +497,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'size',
 	    get: function get() {
 	      return {
-	        width: window.innerWidth,
-	        height: window.innerHeight
+	        width: this.width,
+	        height: this.height
 	      };
 	    }
 	  }]);
@@ -670,7 +676,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'load',
 	    value: function load() {
 
-	      if (!this.img.width || !this.img.width) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
+	      if (!this.img.width || !this.img.width || !this.img.complete) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
 
 	      return this;
 	    }
@@ -722,8 +728,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'draw',
 	    value: function draw(stage) {
-	      var offsetYPerc = (this.offset.top + (this.size.height + stage.height) / 2 - stage.scrollTop) / stage.height - 1;
+	      var size = this.size,
+	          offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
+
 	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate3d(0, ' + -offsetYPerc * this.opts.intensity + '%, 0)');
+
 	      return this;
 	    }
 
@@ -759,8 +768,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    get: function get() {
 	      var props = this.bounds;
 	      return {
-	        height: props.height,
-	        width: props.width
+	        height: props.height | 0,
+	        width: props.width | 0
 	      };
 	    }
 	  }]);

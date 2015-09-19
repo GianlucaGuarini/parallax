@@ -109,9 +109,13 @@ class Parallax {
    * @returns { Array } - list of canvas instances
    */
   createCanvases(els) {
-    return els.map(el => new Canvas(el, {
-      intensity: el.dataset.intensity || this.opts.intensity
-    }))
+    return els.map(el => {
+      var data = el.dataset
+      return new Canvas(el, {
+        intensity: typeof data.intensity != 'undefined' ? +data.intensity : this.opts.intensity,
+        center: typeof data.center != 'undefined' ? +data.center : this.opts.center
+      })
+    })
   }
   /**
    * The options will be always set extending the script _defaults
@@ -120,7 +124,8 @@ class Parallax {
   set opts (opts) {
     this._defaults = {
       offsetYBounds: 50,
-      intensity: 30
+      intensity: 30,
+      center: 0.5
     }
     extend(this._defaults, opts)
   }
