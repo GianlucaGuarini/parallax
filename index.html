@@ -32,6 +32,7 @@
 <li>No dependencies</li>
 <li>No background positioning, they cause weird scroll issues on safari</li>
 <li>Modern and flexible api</li>
+<li>Modern and clean source code</li>
 </ul>
 
 <p>So I decided to make my own, and you can be free to use it or simply ignore it!</p>
@@ -46,7 +47,18 @@
 <h1>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
 
-<p>Once you have included the script in your page, you should wrap your parallax images in a wrapper</p>
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install scroll-parallax --save
+<span class="pl-c"># or</span>
+$ bower install scroll-parallax --save</pre></div>
+
+<h2>
+<a id="markup-and-initialization" class="anchor" href="#markup-and-initialization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Markup and initialization</h2>
+
+<p>Once you have included the script in your page, you should wrap your parallax images in a wrapper having an <code>height</code>, <code>position:relative or absolute</code> and <code>overflow: hidden</code>
+The images will be stretched to fit always the whole wrapper size</p>
 
 <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">style</span>=<span class="pl-s"><span class="pl-pds">"</span>position: relative; height: 300px; overflow: hidden;<span class="pl-pds">"</span></span>&gt;
   &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
