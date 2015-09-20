@@ -19,9 +19,7 @@
     </section>
 
     <section class="main-content">
-      <p><a href="demo">demo</a></p>
-
-<h1>
+      <h1>
 <a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why</h1>
 
 <blockquote>
@@ -37,6 +35,13 @@
 </ul>
 
 <p>So I decided to make my own, and you can be free to use it or simply ignore it!</p>
+
+<h1>
+<a id="demos" class="anchor" href="#demos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demos</h1>
+
+<ul>
+<li><a href="http://gianlucaguarini.github.io/parallax/demo">demo</a></li>
+</ul>
 
 <h1>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -57,6 +62,11 @@
 <p>Each Parallax instance has some useful methods that could be used to adapt it to your application needs</p>
 
 <h3>
+<a id="parallaxinit" class="anchor" href="#parallaxinit" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.init</h3>
+
+<p>Initialize the parallax internal event listeners. The listeners to <code>image:loaded</code> and <code>images:loaded</code> should be set before this method gets called</p>
+
+<h3>
 <a id="parallaxon" class="anchor" href="#parallaxon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.on</h3>
 
 <p>The <code>on</code> method allows you to listen the internal Parallax events from the outside.<br>
@@ -73,8 +83,7 @@ Currently it supports:</p>
 <code>resize</code>: when the parallax images get resized</li>
 </ul>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>)
-p.on(<span class="pl-s"><span class="pl-pds">'</span>image:loaded<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">image</span>){
+<div class="highlight highlight-source-js"><pre>p.on(<span class="pl-s"><span class="pl-pds">'</span>image:loaded<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">image</span>){
   <span class="pl-c">// do something with the image tag</span>
 })
 p.init()</pre></div>
@@ -84,8 +93,7 @@ p.init()</pre></div>
 
 <p>Stop listening an internal Parallax event</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>),
-  <span class="pl-en">fn</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">image</span>) {
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">fn</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">image</span>) {
     <span class="pl-c">// do something with the image tag just drawn</span>
     p.off(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn) <span class="pl-c">// stop listening the draw event</span>
   }
@@ -97,8 +105,7 @@ p.init()</pre></div>
 
 <p>Refresh the position of the images visible in the viewport</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()
-<span class="pl-c">// do extremely heavy dom updates</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// do extremely heavy dom updates</span>
 p.refresh()</pre></div>
 
 <h3>
@@ -106,8 +113,7 @@ p.refresh()</pre></div>
 
 <p>Add new images to the parallax instance</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()
-<span class="pl-c">// inject new images</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// inject new images</span>
 p.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>)</pre></div>
 
 <h3>
@@ -115,8 +121,7 @@ p.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span
 
 <p>Remove images from the parallax instance</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()
-p.remove(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>) <span class="pl-c">// remove the images from the parallax</span>
+<div class="highlight highlight-source-js"><pre>p.remove(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>) <span class="pl-c">// remove the images from the parallax</span>
 <span class="pl-c">// and also from the DOM...</span></pre></div>
 
 <h3>
@@ -124,8 +129,7 @@ p.remove(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class=
 
 <p>Destroy the parallax instance removing all the internal and external callbacks to its internal events</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()
-p.destroy() <span class="pl-c">// the parallax is dead!</span></pre></div>
+<div class="highlight highlight-source-js"><pre>p.destroy() <span class="pl-c">// the parallax is dead!</span></pre></div>
 
 <h1>
 <a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h1>
