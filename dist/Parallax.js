@@ -181,11 +181,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      while (i--) {
 
-	        var canvas = this.canvases[i];
+	        var canvas = this.canvases[i],
+	            stageScrollTop = stage.scrollTop,
+	            canvasHeight = canvas.size.height,
+	            offsetYBounds = this.opts.offsetYBounds,
+	            canvasOffset = canvas.offset,
+	            canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop;
 
-	        if (!canvas.isLoaded) return this;
-
-	        if (stage.scrollTop + stage.size.height >= canvas.offset.top && stage.scrollTop <= canvas.offset.top + canvas.size.height) canvas.draw(stage);
+	        if (canvas.isLoaded && canvasScrollDelta + offsetYBounds > 0 && canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height) canvas.draw(stage);
 	      }
 
 	      return this;
@@ -220,8 +223,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this2 = this;
 
 	      return els.map(function (el) {
+	        var data = (0, _helpersHelpers.elementData)(el);
 	        return new _Canvas2['default'](el, {
-	          intensity: _this2.opts.intensity
+	          intensity: !(0, _helpersHelpers.isUndefined)(data.intensity) ? +data.intensity : _this2.opts.intensity,
+	          center: !(0, _helpersHelpers.isUndefined)(data.center) ? +data.center : _this2.opts.center
 	        });
 	      });
 	    }
@@ -234,7 +239,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'opts',
 	    set: function set(opts) {
 	      this._defaults = {
-	        intensity: 0.5
+	        offsetYBounds: 50,
+	        intensity: 30,
+	        center: 0.5
 	      };
 	      (0, _helpersHelpers.extend)(this._defaults, opts);
 	    },
@@ -310,23 +317,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return src;
 	  },
 	  /**
+	   * Check if a value is undefined
+	   * @param   { * }  val - test value
+	   * @returns {Boolean} - true if it's undefined
+	   */
+	  isUndefined: function isUndefined(val) {
+	    return typeof val == 'undefined';
+	  },
+	  /**
+	   * Get the data-* of any DOM element
+	   * @param   { Object } el - DOM element we want to parse
+	   * @param   { String } attr - specific data attribute we want to get
+	   * @returns { String|Object } - value/values of the data attributes
+	   */
+	  elementData: function elementData(el, attr) {
+	    if (attr) return el.dataset[attr] || el.getAttribute('data-' + attr);else return el.dataset || Array.prototype.slice.call(el.attributes).reduce(function (ret, attribute) {
+	      if (/data-/.test(attribute.name)) ret[attribute.name] = attribute.value;
+	      return ret;
+	    }, {});
+	  },
+	  /**
 	   * Prefix any fancy browser object property
 	   * @param   { Object } obj - object we want to update normally el.style
 	   * @param   { String } prop - the new object property we want to set
 	   * @param   { * } value - new value we want to assign to the prefixed property
-	   * @returns { undefined }
+	   * @returns { Boolean } - return whether the feature is supported
 	   */
 	  prefix: function prefix(obj, prop, value) {
-	    var pre = ['', 'webkit', 'Moz', 'o', 'ms'];
-	    for (var p in pre) {
+	    var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
+	        i = prefixes.length;
+	    while (i--) {
+	      var prefix = prefixes[i],
+
 	      // check if the prefix exists othewise we will use the unprefixed version
 	      // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
-	      p = pre[p] ? pre[prop[0].toUpperCase() + prop.substr(1)] + prop : prop[0].toLowerCase() + prop.substr(1);
+	      p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1);
 	      if (p in obj) {
-	        obj[prefs[pref] + prop] = value;
-	        return;
+	        obj[p] = value;
+	        return true;
 	      }
 	    }
+	    return false;
 	  }
 	};
 	module.exports = exports['default'];
@@ -385,6 +416,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this.scroll();
 	      }, true);
 	      window.addEventListener('mousewheel', function () {
+	        return _this.scroll();
+	      }, true);
+	      window.addEventListener('touchmove', function () {
 	        return _this.scroll();
 	      }, true);
 	      window.addEventListener('resize', function () {
@@ -457,6 +491,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
+	     * It returns the window height
+	     * @returns { Number } - height of the viewport
+	     */
+	  }, {
+	    key: 'height',
+	    get: function get() {
+	      return window.innerHeight;
+	    }
+
+	    /**
+	     * It returns the window width
+	     * @returns { Number } - width of the viewport
+	     */
+	  }, {
+	    key: 'width',
+	    get: function get() {
+	      return window.innerWidth;
+	    }
+
+	    /**
 	     * It returns the window size
 	     * @returns { Object } - width and height of the viewport
 	     */
@@ -464,8 +518,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'size',
 	    get: function get() {
 	      return {
-	        width: window.innerWidth,
-	        height: window.innerHeight
+	        width: this.width,
+	        height: this.height
 	      };
 	    }
 	  }]);
@@ -630,8 +684,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    (0, _riotObservable2['default'])(this);
 	    this.opts = opts;
 	    this.img = img;
-	    this.el = document.createElement('canvas');
-	    this.c = this.el.getContext('2d');
 	    this.wrapper = img.parentNode;
 	    this.isLoaded = false;
 	  }
@@ -645,7 +697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'load',
 	    value: function load() {
 
-	      if (!this.img.width || !this.img.width) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
+	      if (!this.img.width || !this.img.width || !this.img.complete) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
 
 	      return this;
 	    }
@@ -658,17 +710,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'onImageLoaded',
 	    value: function onImageLoaded() {
 	      this.isLoaded = true;
-	      // replace the image with the canvas
-	      this.wrapper.replaceChild(this.el, this.img);
 	      this.update();
 	      this.trigger('loaded', this.img);
 	      return this;
 	    }
+
+	    /**
+	     * Center the image in its wrapper
+	     * @returns { Object } - Canvas
+	     */
 	  }, {
 	    key: 'update',
 	    value: function update() {
-	      this.el.width = this.size.width;
-	      this.el.height = this.size.height;
+
+	      var iw = this.img.naturalWidth || this.img.width,
+	          ih = this.img.naturalHeight || this.img.height,
+	          ratio = iw / ih,
+	          size = this.size;
+
+	      if (size.width / ratio <= size.height) {
+	        this.img.height = size.height;
+	        this.img.width = size.height * ratio;
+	      } else {
+	        this.img.width = size.width;
+	        this.img.height = size.width / ratio;
+	      }
+
+	      this.img.style.top = - ~ ~((this.img.height - size.height) / 2) + 'px';
+	      this.img.style.left = - ~ ~((this.img.width - size.width) / 2) + 'px';
+
 	      return this;
 	    }
 
@@ -679,67 +749,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'draw',
 	    value: function draw(stage) {
-	      var offsetY = (this.offset.top + this.el.height / 2 - stage.scrollTop) / stage.size.height * this.opts.intensity,
-	          translateY = this.offset.top - stage.scrollTop,
-	          x = 0,
-	          y = translateY < 0 ? -translateY * this.opts.intensity : 0;
+	      var size = this.size,
 
-	      this.drawImageProp(this.c, x, y, this.el.width, this.el.height, 0.5, offsetY);
+	      // this value will be:
+	      //  < 0 when the image is on the top
+	      //  0 when the image is in the center of the screen
+	      //  > 0 when the image is at the bottom
+	      perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
+	      // increase the percentage effect according to the intensity
+	      // and the current image height
+	      perc *= this.img.height / size.height / 2 * this.opts.intensity;
+	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
 
 	      return this;
-	    }
-	  }, {
-	    key: 'drawImageProp',
-	    value: function drawImageProp(ctx, x, y, w, h) {
-	      var offsetX = arguments.length <= 5 || arguments[5] === undefined ? 0.5 : arguments[5];
-	      var offsetY = arguments.length <= 6 || arguments[6] === undefined ? 0.5 : arguments[6];
-
-	      if (arguments.length === 2) {
-	        x = y = 0;
-	        w = ctx.canvas.width;
-	        h = ctx.canvas.height;
-	      }
-
-	      /// keep bounds [0.0, 1.0]
-	      if (offsetX < 0) offsetX = 0;
-	      if (offsetY < 0) offsetY = 0;
-	      if (offsetX > 1) offsetX = 1;
-	      if (offsetY > 1) offsetY = 1;
-
-	      var iw = this.img.naturalWidth || this.img.width,
-	          ih = this.img.naturalHeight || this.img.height,
-	          r = Math.min(w / iw, h / ih),
-	          nw = Math.ceil(iw * r),
-	          /// new prop. width
-	      nh = Math.ceil(ih * r),
-	          /// new prop. height
-	      cx,
-	          cy,
-	          cw,
-	          ch,
-	          ar = 1;
-
-	      /// decide which gap to fill
-	      if (nw < w) ar = w / nw;
-	      if (nh < h) ar = h / nh;
-	      nw *= ar;
-	      nh *= ar;
-
-	      /// calc source rectangle
-	      cw = iw / (nw / w);
-	      ch = ih / (nh / h);
-
-	      cx = (iw - cw) * offsetX;
-	      cy = (ih - ch) * offsetY;
-
-	      /// make sure source rectangle is valid
-	      if (cx < 0) cx = 0;
-	      if (cy < 0) cy = 0;
-	      if (cw > iw) cw = iw;
-	      if (ch > ih) ch = ih;
-
-	      /// fill image in dest. rectangle
-	      ctx.drawImage(this.img, cx, cy, cw, ch, x, y, w, h);
 	    }
 
 	    /**
@@ -774,8 +796,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    get: function get() {
 	      var props = this.bounds;
 	      return {
-	        height: Math.ceil(props.height),
-	        width: Math.ceil(props.width)
+	        height: props.height | 0,
+	        width: props.width | 0
 	      };
 	    }
 	  }]);

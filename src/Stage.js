@@ -29,6 +29,7 @@ export default class Stage {
 
     window.addEventListener('scroll',  () => this.scroll(), true)
     window.addEventListener('mousewheel', () => this.scroll(), true)
+    window.addEventListener('touchmove', () => this.scroll(), true)
     window.addEventListener('resize', () => this.resize(), true)
     window.addEventListener('orientationchange', () => this.resize(), true)
     window.onload = () => this.scroll() // force an update event
@@ -74,13 +75,27 @@ export default class Stage {
     return window.isNaN(top) ? 0 : top
   }
   /**
+   * It returns the window height
+   * @returns { Number } - height of the viewport
+   */
+  get height() {
+    return window.innerHeight
+  }
+  /**
+   * It returns the window width
+   * @returns { Number } - width of the viewport
+   */
+  get width() {
+    return window.innerWidth
+  }
+  /**
    * It returns the window size
    * @returns { Object } - width and height of the viewport
    */
   get size() {
     return {
-      width: window.innerWidth,
-      height: window.innerHeight
+      width: this.width,
+      height: this.height
     }
   }
 }

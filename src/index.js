@@ -1,4 +1,4 @@
-import { $, $$, extend } from './helpers/helpers'
+import { $, $$, extend, isUndefined, elementData } from './helpers/helpers'
 import Stage from './Stage'
 import Canvas from './Canvas'
 import o from 'riot-observable'
@@ -71,13 +71,17 @@ class Parallax {
 
     while (i--) {
 
-      var canvas = this.canvases[i]
-
-      if (!canvas.isLoaded) return this
+      var canvas = this.canvases[i],
+        stageScrollTop = stage.scrollTop,
+        canvasHeight = canvas.size.height,
+        offsetYBounds = this.opts.offsetYBounds,
+        canvasOffset = canvas.offset,
+        canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop
 
       if (
-        stage.scrollTop + stage.size.height >= canvas.offset.top &&
-        stage.scrollTop <= canvas.offset.top + canvas.size.height
+        canvas.isLoaded &&
+        canvasScrollDelta + offsetYBounds > 0 &&
+        canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height
       ) canvas.draw(stage)
 
     }
@@ -105,9 +109,13 @@ class Parallax {
    * @returns { Array } - list of canvas instances
    */
   createCanvases(els) {
-    return els.map(el => new Canvas(el, {
-      intensity: this.opts.intensity
-    }))
+    return els.map(el => {
+      var data = elementData(el)
+      return new Canvas(el, {
+        intensity: !isUndefined(data.intensity) ? +data.intensity : this.opts.intensity,
+        center: !isUndefined(data.center) ? +data.center : this.opts.center
+      })
+    })
   }
   /**
    * The options will be always set extending the script _defaults
@@ -115,7 +123,9 @@ class Parallax {
    */
   set opts (opts) {
     this._defaults = {
-      intensity: 0.5
+      offsetYBounds: 50,
+      intensity: 30,
+      center: 0.5
     }
     extend(this._defaults, opts)
   }
