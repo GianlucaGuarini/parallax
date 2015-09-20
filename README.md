@@ -1,5 +1,3 @@
-[demo](http://gianlucaguarini.github.io/parallax/demo)
-
 # Why
 
 > Oh no, why another parallax library? Do we really need it?
@@ -11,6 +9,10 @@ There are many parallax scripts but none of them was satisfying my personal need
   - Modern and flexible api
 
 So I decided to make my own, and you can be free to use it or simply ignore it!
+
+# Demos
+
+  - [demo](http://gianlucaguarini.github.io/parallax/demo)
 
 # Usage
 
