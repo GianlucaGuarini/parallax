@@ -44,11 +44,29 @@ export default {
     return src
   },
   /**
+   * Check if a value is undefined
+   * @param   { * }  val - test value
+   * @returns {Boolean} - true if it's undefined
+   */
+  isUndefined(val) {
+    return typeof val == 'undefined'
+  },
+  elementData(el, attr) {
+    if (attr)
+      return el.dataset[attr] || el.getAttribute(`data-${attr}`)
+    else
+      return el.dataset || Array.prototype.slice.call(el.attributes).reduce((ret, attribute) => {
+        if (/data-/.test(attribute.name))
+          ret[attribute.name] = attribute.value
+        return ret
+      }, {})
+  },
+  /**
    * Prefix any fancy browser object property
    * @param   { Object } obj - object we want to update normally el.style
    * @param   { String } prop - the new object property we want to set
    * @param   { * } value - new value we want to assign to the prefixed property
-   * @returns { undefined }
+   * @returns { Boolean } - return whether the feature is supported
    */
   prefix(obj, prop, value) {
     var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
@@ -60,8 +78,9 @@ export default {
         p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1)
       if (p in obj) {
         obj[p] = value
-        return
+        return true
       }
     }
+    return false
   }
 }

@@ -68,7 +68,7 @@ export default class Canvas {
     var size = this.size,
       offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1
 
-    prefix(this.img.style, 'transform', `translate3d(0, ${-offsetYPerc * this.opts.intensity}%, 0)`)
+    prefix(this.img.style, 'transform', `translate(0, ${-offsetYPerc * this.opts.intensity}%)`)
 
     return this
   }

@@ -1,4 +1,4 @@
-import { $, $$, extend } from './helpers/helpers'
+import { $, $$, extend, isUndefined, elementData } from './helpers/helpers'
 import Stage from './Stage'
 import Canvas from './Canvas'
 import o from 'riot-observable'
@@ -110,10 +110,10 @@ class Parallax {
    */
   createCanvases(els) {
     return els.map(el => {
-      var data = el.dataset
+      var data = elementData(el)
       return new Canvas(el, {
-        intensity: typeof data.intensity != 'undefined' ? +data.intensity : this.opts.intensity,
-        center: typeof data.center != 'undefined' ? +data.center : this.opts.center
+        intensity: !isUndefined(data.intensity) ? +data.intensity : this.opts.intensity,
+        center: !isUndefined(data.center) ? +data.center : this.opts.center
       })
     })
   }

@@ -223,10 +223,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this2 = this;
 
 	      return els.map(function (el) {
-	        var data = el.dataset;
+	        var data = (0, _helpersHelpers.elementData)(el);
 	        return new _Canvas2['default'](el, {
-	          intensity: typeof data.intensity != 'undefined' ? +data.intensity : _this2.opts.intensity,
-	          center: typeof data.center != 'undefined' ? +data.center : _this2.opts.center
+	          intensity: !(0, _helpersHelpers.isUndefined)(data.intensity) ? +data.intensity : _this2.opts.intensity,
+	          center: !(0, _helpersHelpers.isUndefined)(data.center) ? +data.center : _this2.opts.center
 	        });
 	      });
 	    }
@@ -317,11 +317,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return src;
 	  },
 	  /**
+	   * Check if a value is undefined
+	   * @param   { * }  val - test value
+	   * @returns {Boolean} - true if it's undefined
+	   */
+	  isUndefined: function isUndefined(val) {
+	    return typeof val == 'undefined';
+	  },
+	  elementData: function elementData(el, attr) {
+	    if (attr) return el.dataset[attr] || el.getAttribute('data-' + attr);else return el.dataset || Array.prototype.slice.call(el.attributes).reduce(function (ret, attribute) {
+	      if (/data-/.test(attribute.name)) ret[attribute.name] = attribute.value;
+	      return ret;
+	    }, {});
+	  },
+	  /**
 	   * Prefix any fancy browser object property
 	   * @param   { Object } obj - object we want to update normally el.style
 	   * @param   { String } prop - the new object property we want to set
 	   * @param   { * } value - new value we want to assign to the prefixed property
-	   * @returns { undefined }
+	   * @returns { Boolean } - return whether the feature is supported
 	   */
 	  prefix: function prefix(obj, prop, value) {
 	    var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
@@ -334,9 +348,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1);
 	      if (p in obj) {
 	        obj[p] = value;
-	        return;
+	        return true;
 	      }
 	    }
+	    return false;
 	  }
 	};
 	module.exports = exports['default'];
@@ -731,7 +746,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var size = this.size,
 	          offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
 
-	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate3d(0, ' + -offsetYPerc * this.opts.intensity + '%, 0)');
+	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -offsetYPerc * this.opts.intensity + '%)');
 
 	      return this;
 	    }
