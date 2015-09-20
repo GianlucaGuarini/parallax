@@ -7,6 +7,7 @@ There are many parallax scripts but none of them was satisfying my personal need
   - No dependencies
   - No background positioning, they cause weird scroll issues on safari
   - Modern and flexible api
+  - Modern and clean source code
 
 So I decided to make my own, and you can be free to use it or simply ignore it!
 
@@ -16,7 +17,18 @@ So I decided to make my own, and you can be free to use it or simply ignore it!
 
 # Usage
 
-Once you have included the script in your page, you should wrap your parallax images in a wrapper
+## Installation
+
+```sh
+$ npm install scroll-parallax --save
+# or
+$ bower install scroll-parallax --save
+```
+
+## Markup and initialization
+
+Once you have included the script in your page, you should wrap your parallax images in a wrapper having an `height`, `position:relative or absolute` and `overflow: hidden`
+The images will be stretched to fit always the whole wrapper size
 
 ```html
 <div style="position: relative; height: 300px; overflow: hidden;">
