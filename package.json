@@ -1,6 +1,6 @@
 {
-  "name": "gi-parallax",
-  "version": "1.0.0",
+  "name": "scroll-parallax",
+  "version": "1.0.0-beta",
   "description": " HW accelerated scrollable images parallax using HTML5 canvas — Edit ",
   "main": "index.js",
   "scripts": {

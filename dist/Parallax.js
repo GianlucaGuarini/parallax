@@ -102,11 +102,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    (0, _riotObservable2['default'])(this);
 	    // set the options extending the _defaults
 	    this.opts = opts;
-	    this.canvases = this.createCanvases(typeof els == 'string' ? (0, _helpersHelpers.$$)(els) : els);
-
+	    this.canvases = [];
+	    this.add(els);
 	    if (!this.canvases.length) return console.warn('No images were found with the selector "' + els + '"'); // undefined
 	    // lazy stage instance initialization
 	    if (!stage) stage = new _Stage2['default']();
+
 	    return this;
 	  }
 
@@ -132,20 +133,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function bind() {
 	      var _this = this;
 
-	      stage.on('resize', function () {
+	      // cache these function in order to unbind them when
+	      // this instance will be destroyed
+	      this._onResize = function () {
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	          args[_key] = arguments[_key];
 	        }
 
-	        return _this.onResize.apply(_this, args);
-	      });
-	      stage.on('scroll', function () {
+	        return _this.resize.apply(_this, args);
+	      };
+	      this._onScroll = function () {
 	        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	          args[_key2] = arguments[_key2];
 	        }
 
-	        return _this.onScroll.apply(_this, args);
-	      });
+	        return _this.scroll.apply(_this, args);
+	      };
+
+	      stage.on('resize', this._onResize);
+	      stage.on('scroll', this._onScroll);
+
 	      this.canvases.forEach(function (canvas) {
 	        canvas.one('loaded', function () {
 	          return _this.onCanvasLoaded(canvas);
@@ -188,8 +195,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns { Object } - Parallax
 	     */
 	  }, {
-	    key: 'onScroll',
-	    value: function onScroll(scrollTop) {
+	    key: 'scroll',
+	    value: function scroll(scrollTop) {
 	      var i = this.canvases.length;
 
 	      while (i--) {
@@ -201,9 +208,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvasOffset = canvas.offset,
 	            canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop;
 
-	        if (canvas.isLoaded && canvasScrollDelta + offsetYBounds > 0 && canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height) canvas.draw(stage);
+	        if (canvas.isLoaded && canvasScrollDelta + offsetYBounds > 0 && canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height) {
+	          canvas.draw(stage);
+	          this.trigger('draw', canvas.img);
+	        }
 	      }
 
+	      return this;
+	    }
+
+	    /**
+	     * Add parallax elements to this parallax instance
+	     * @param { String|Array } els - DOM selector or node list
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
+	    key: 'add',
+	    value: function add(els) {
+	      this.canvases = this.canvases.concat(this.createCanvases((0, _helpersHelpers.$$)(els)));
+	      return this;
+	    }
+
+	    /**
+	     * Remove parallax elements from this parallax instance
+	     * @param { String|Array } els - DOM selector or node list
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
+	    key: 'remove',
+	    value: function remove(els) {
+	      var _this2 = this;
+
+	      (0, _helpersHelpers.$$)(els).forEach(function (el) {
+	        var i = _this2.canvases.length;
+	        while (i--) {
+	          if (el == _this2.canvases[i].img) {
+	            _this2.canvases.splice(i, 1);
+	            break;
+	          }
+	        }
+	      });
+	      return this;
+	    }
+
+	    /**
+	     * Kill all the internal and external callbacks listening this instance events
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
+	    key: 'destroy',
+	    value: function destroy() {
+	      this.off('*');
+	      stage.off('resize', this._onResize).off('scroll', this._onScroll);
 	      return this;
 	    }
 
@@ -213,15 +269,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns { Object } - Parallax
 	     */
 	  }, {
-	    key: 'onResize',
-	    value: function onResize(size) {
+	    key: 'resize',
+	    value: function resize(size) {
 	      var i = this.canvases.length;
-
 	      while (i--) {
 	        var canvas = this.canvases[i];
 	        if (!canvas.isLoaded) return;
 	        canvas.update().draw(stage);
 	      }
+	      this.trigger('resize');
 	      return this;
 	    }
 
@@ -233,13 +289,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'createCanvases',
 	    value: function createCanvases(els) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      return els.map(function (el) {
 	        var data = (0, _helpersHelpers.elementData)(el);
 	        return new _Canvas2['default'](el, {
-	          intensity: !(0, _helpersHelpers.isUndefined)(data.intensity) ? +data.intensity : _this2.opts.intensity,
-	          center: !(0, _helpersHelpers.isUndefined)(data.center) ? +data.center : _this2.opts.center
+	          intensity: !(0, _helpersHelpers.isUndefined)(data.intensity) ? +data.intensity : _this3.opts.intensity,
+	          center: !(0, _helpersHelpers.isUndefined)(data.center) ? +data.center : _this3.opts.center
 	        });
 	      });
 	    }
@@ -290,12 +346,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = {
 	  /**
 	   * Shorter and fast way to select multiple nodes in the DOM
-	   * @param   { String } selector - DOM selector
+	   * @param   { String|Array } selector - DOM selector or nodes list
 	   * @param   { Object } ctx - DOM node where the targets of our search will is located
 	   * @returns { Object } dom nodes found
 	   */
 	  $$: function $$(selector, ctx) {
-	    return Array.prototype.slice.call((ctx || document).querySelectorAll(selector));
+	    var els;
+	    if (typeof selector == 'string') els = (ctx || document).querySelectorAll(selector);else els = selector;
+	    return Array.prototype.slice.call(els);
 	  },
 
 	  /**

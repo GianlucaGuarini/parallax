@@ -5,12 +5,17 @@
 export default {
   /**
    * Shorter and fast way to select multiple nodes in the DOM
-   * @param   { String } selector - DOM selector
+   * @param   { String|Array } selector - DOM selector or nodes list
    * @param   { Object } ctx - DOM node where the targets of our search will is located
    * @returns { Object } dom nodes found
    */
   $$(selector, ctx) {
-    return Array.prototype.slice.call((ctx || document).querySelectorAll(selector))
+    var els
+    if (typeof selector == 'string')
+      els = (ctx || document).querySelectorAll(selector)
+    else
+      els = selector
+    return Array.prototype.slice.call(els)
   },
 
   /**

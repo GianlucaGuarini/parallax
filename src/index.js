@@ -21,13 +21,14 @@ class Parallax {
     o(this)
     // set the options extending the _defaults
     this.opts = opts
-    this.canvases = this.createCanvases(typeof els == 'string' ? $$(els) : els)
-
+    this.canvases = []
+    this.add(els)
     if (!this.canvases.length)
       return console.warn(`No images were found with the selector "${els}"`) // undefined
     // lazy stage instance initialization
     if (!stage)
       stage = new Stage()
+
     return this
   }
   /**
@@ -45,8 +46,14 @@ class Parallax {
    */
   bind() {
 
-    stage.on('resize', (...args) => this.onResize.apply(this, args))
-    stage.on('scroll', (...args) => this.onScroll.apply(this, args))
+    // cache these function in order to unbind them when
+    // this instance will be destroyed
+    this._onResize = (...args) => this.resize.apply(this, args)
+    this._onScroll = (...args) => this.scroll.apply(this, args)
+
+    stage.on('resize', this._onResize)
+    stage.on('scroll', this._onScroll)
+
     this.canvases.forEach((canvas) => {
       canvas.one('loaded', () => this.onCanvasLoaded(canvas))
       canvas.load()
@@ -79,7 +86,7 @@ class Parallax {
    * @param   { Number } scrollTop - page offset top
    * @returns { Object } - Parallax
    */
-  onScroll(scrollTop) {
+  scroll(scrollTop) {
     var i = this.canvases.length
 
     while (i--) {
@@ -95,10 +102,48 @@ class Parallax {
         canvas.isLoaded &&
         canvasScrollDelta + offsetYBounds > 0 &&
         canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height
-      ) canvas.draw(stage)
+      ) {
+        canvas.draw(stage)
+        this.trigger('draw', canvas.img)
+      }
 
     }
 
+    return this
+  }
+  /**
+   * Add parallax elements to this parallax instance
+   * @param { String|Array } els - DOM selector or node list
+   * @returns { Object } - Parallax
+   */
+  add(els) {
+    this.canvases = this.canvases.concat(this.createCanvases($$(els)))
+    return this
+  }
+  /**
+   * Remove parallax elements from this parallax instance
+   * @param { String|Array } els - DOM selector or node list
+   * @returns { Object } - Parallax
+   */
+  remove(els) {
+    $$(els).forEach((el) => {
+      var i = this.canvases.length
+      while (i--) {
+        if (el == this.canvases[i].img) {
+          this.canvases.splice(i, 1)
+          break
+        }
+      }
+    })
+    return this
+  }
+  /**
+   * Kill all the internal and external callbacks listening this instance events
+   * @returns { Object } - Parallax
+   */
+  destroy() {
+    this.off('*')
+    stage.off('resize', this._onResize).off('scroll', this._onScroll)
     return this
   }
   /**
@@ -106,14 +151,14 @@ class Parallax {
    * @param   { Object } size - object containing the window width and height
    * @returns { Object } - Parallax
    */
-  onResize(size) {
+  resize(size) {
     var i = this.canvases.length
-
     while (i--) {
       var canvas = this.canvases[i]
       if (!canvas.isLoaded) return
       canvas.update().draw(stage)
     }
+    this.trigger('resize')
     return this
   }
   /**
