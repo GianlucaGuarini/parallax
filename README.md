@@ -1,4 +1,4 @@
-[demo](demo)
+[demo](http://gianlucaguarini.github.io/parallax/demo)
 
 # Why
 
@@ -32,6 +32,10 @@ var p = new Parallax('.parallax').init()
 
 Each Parallax instance has some useful methods that could be used to adapt it to your application needs
 
+### Parallax.init
+
+Initialize the parallax internal event listeners. The listeners to `image:loaded` and `images:loaded` should be set before this method gets called
+
 ### Parallax.on
 
 The `on` method allows you to listen the internal Parallax events from the outside.<br />
@@ -42,7 +46,6 @@ Currently it supports:
   - `resize`: when the parallax images get resized
 
 ```js
-var p = new Parallax('.parallax')
 p.on('image:loaded', function(image){
   // do something with the image tag
 })
@@ -54,8 +57,7 @@ p.init()
 Stop listening an internal Parallax event
 
 ```js
-var p = new Parallax('.parallax'),
-  fn = function (image) {
+var fn = function (image) {
     // do something with the image tag just drawn
     p.off('draw', fn) // stop listening the draw event
   }
@@ -68,7 +70,6 @@ p.init()
 Refresh the position of the images visible in the viewport
 
 ```js
-var p = new Parallax('.parallax').init()
 // do extremely heavy dom updates
 p.refresh()
 ```
@@ -78,7 +79,6 @@ p.refresh()
 Add new images to the parallax instance
 
 ```js
-var p = new Parallax('.parallax').init()
 // inject new images
 p.add('.parallax-2')
 ```
@@ -88,7 +88,6 @@ p.add('.parallax-2')
 Remove images from the parallax instance
 
 ```js
-var p = new Parallax('.parallax').init()
 p.remove('.parallax-2') // remove the images from the parallax
 // and also from the DOM...
 ```
@@ -98,7 +97,6 @@ p.remove('.parallax-2') // remove the images from the parallax
 Destroy the parallax instance removing all the internal and external callbacks to its internal events
 
 ```js
-var p = new Parallax('.parallax').init()
 p.destroy() // the parallax is dead!
 ```
 
