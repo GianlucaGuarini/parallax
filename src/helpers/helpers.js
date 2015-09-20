@@ -51,6 +51,12 @@ export default {
   isUndefined(val) {
     return typeof val == 'undefined'
   },
+  /**
+   * Get the data-* of any DOM element
+   * @param   { Object } el - DOM element we want to parse
+   * @param   { String } attr - specific data attribute we want to get
+   * @returns { String|Object } - value/values of the data attributes
+   */
   elementData(el, attr) {
     if (attr)
       return el.dataset[attr] || el.getAttribute(`data-${attr}`)

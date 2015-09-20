@@ -66,9 +66,15 @@ export default class Canvas {
    */
   draw(stage) {
     var size = this.size,
-      offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1
-
-    prefix(this.img.style, 'transform', `translate(0, ${-offsetYPerc * this.opts.intensity}%)`)
+      // this value will be:
+      //  < 0 when the image is on the top
+      //  0 when the image is in the center of the screen
+      //  > 0 when the image is at the bottom
+      perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1
+    // increase the percentage effect according to the intensity
+    // and the current image height
+    perc *= this.img.height / size.height / 2 * this.opts.intensity
+    prefix(this.img.style, 'transform', `translate(0, ${-perc}%)`)
 
     return this
   }

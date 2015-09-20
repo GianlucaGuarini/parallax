@@ -324,6 +324,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  isUndefined: function isUndefined(val) {
 	    return typeof val == 'undefined';
 	  },
+	  /**
+	   * Get the data-* of any DOM element
+	   * @param   { Object } el - DOM element we want to parse
+	   * @param   { String } attr - specific data attribute we want to get
+	   * @returns { String|Object } - value/values of the data attributes
+	   */
 	  elementData: function elementData(el, attr) {
 	    if (attr) return el.dataset[attr] || el.getAttribute('data-' + attr);else return el.dataset || Array.prototype.slice.call(el.attributes).reduce(function (ret, attribute) {
 	      if (/data-/.test(attribute.name)) ret[attribute.name] = attribute.value;
@@ -744,9 +750,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'draw',
 	    value: function draw(stage) {
 	      var size = this.size,
-	          offsetYPerc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
 
-	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -offsetYPerc * this.opts.intensity + '%)');
+	      // this value will be:
+	      //  < 0 when the image is on the top
+	      //  0 when the image is in the center of the screen
+	      //  > 0 when the image is at the bottom
+	      perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
+	      // increase the percentage effect according to the intensity
+	      // and the current image height
+	      perc *= this.img.height / size.height / 2 * this.opts.intensity;
+	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
 
 	      return this;
 	    }
