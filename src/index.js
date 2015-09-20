@@ -8,7 +8,7 @@ import o from 'riot-observable'
  * with this class we listen them once and we subscribe/unsubscribe all the Parallax instances to the main events dispatcher
  * @type {Stage}
  */
-var stage = new Stage()
+var stage
 
 /**
  * @class
@@ -16,15 +16,19 @@ var stage = new Stage()
  */
 class Parallax {
   constructor(els, opts = {}) {
+
     // make this object observable
     o(this)
     // set the options extending the _defaults
     this.opts = opts
     this.canvases = this.createCanvases(typeof els == 'string' ? $$(els) : els)
-    if (!this.canvases.length) {
-      console.warn(`No images were found with the selector "${els}"`)
-      return
-    }
+
+    if (!this.canvases.length)
+      return console.warn(`No images were found with the selector "${els}"`) // undefined
+    // lazy stage instance initialization
+    if (!stage)
+      stage = new Stage()
+    return this
   }
   /**
    * Initialize the parallax
@@ -33,6 +37,7 @@ class Parallax {
   init() {
     this.imagesLoaded = 0
     this.bind()
+    return this
   }
   /**
    * Bind the instance events setting all the callbacks
@@ -47,6 +52,14 @@ class Parallax {
       canvas.load()
     })
 
+    return this
+  }
+  /**
+   * Force manually a redraw
+   * @returns { Object } - Parallax
+   */
+  refresh() {
+    this.onResize(stage.size).onScroll(stage.scrollTop)
     return this
   }
   /**

@@ -85,7 +85,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * with this class we listen them once and we subscribe/unsubscribe all the Parallax instances to the main events dispatcher
 	 * @type {Stage}
 	 */
-	var stage = new _Stage2['default']();
+	var stage;
 
 	/**
 	 * @class
@@ -103,10 +103,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // set the options extending the _defaults
 	    this.opts = opts;
 	    this.canvases = this.createCanvases(typeof els == 'string' ? (0, _helpersHelpers.$$)(els) : els);
-	    if (!this.canvases.length) {
-	      console.warn('No images were found with the selector "' + els + '"');
-	      return;
-	    }
+
+	    if (!this.canvases.length) return console.warn('No images were found with the selector "' + els + '"'); // undefined
+	    // lazy stage instance initialization
+	    if (!stage) stage = new _Stage2['default']();
+	    return this;
 	  }
 
 	  /**
@@ -119,6 +120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function init() {
 	      this.imagesLoaded = 0;
 	      this.bind();
+	      return this;
 	    }
 
 	    /**
@@ -151,6 +153,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        canvas.load();
 	      });
 
+	      return this;
+	    }
+
+	    /**
+	     * Force manually a redraw
+	     * @returns { Object } - Parallax
+	     */
+	  }, {
+	    key: 'refresh',
+	    value: function refresh() {
+	      this.onResize(stage.size).onScroll(stage.scrollTop);
 	      return this;
 	    }
 
