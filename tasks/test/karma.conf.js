@@ -34,9 +34,13 @@ module.exports = function(config) {
       '../dist/*': ['coverage'],
       'test/**/*.js': ['babel']
     },
-    'babelPreprocessor': {},
+    babelPreprocessor: {},
     coverageReporter: {
-      dir: './coverage/'
+      dir: './coverage',
+      reporters: [{
+        type: 'lcov',
+        subdir: 'report-lcov'
+      }]
     },
     singleRun: true
   })

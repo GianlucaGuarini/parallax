@@ -1,15 +1,24 @@
+
+[![Build Status][travis-image]][travis-url]
+[![NPM version][npm-version-image]][npm-url]
+[![NPM downloads][npm-downloads-image]][npm-url]
+[![MIT License][license-image]][license-url]
+[![Coverage Status][coverage-image]][coverage-url]
+[![Code Quality][codeclimate-image]][codeclimate-url]
+
 # Why
 
-> Oh no, why another parallax library? Do we really need it?
+> Oh no, why another parallax script? Do we really need it?
 
 There are many parallax scripts but none of them was satisfying my personal needs:
 
   - No dependencies
-  - No background positioning, they cause weird scroll issues on safari
-  - Modern and flexible api
-  - Modern and clean source code
+  - No background positioning and heavy obtrusive DOM manipulations
+  - Build only for modern devices without internal hacks
+  - Modern and flexible api being thought mainly for ajax applications
+  - Modern and clean ES6/2015 source code
 
-So I decided to make my own, and you can be free to use it or simply ignore it!
+So I decided to make my own and you can be free to use it or simply ignore it and move forward to the next one!
 
 # Demos
 
@@ -31,15 +40,46 @@ Once you have included the script in your page, you should wrap your parallax im
 The images will be stretched to fit always the whole wrapper size
 
 ```html
-<div style="position: relative; height: 300px; overflow: hidden;">
+<figure style="position: relative; height: 300px; overflow: hidden;">
   <img class="parallax" src="path/to/the/image.jpg" />
-</div>
+</figure>
 ```
 
 The Parallax api is really simple and the following snippet should be enough:
 
 ```js
 var p = new Parallax('.parallax').init()
+```
+
+## Options
+
+The options available are only 3 at moment:
+
+| Type    | Name            | Default Value   | Description                                                                                                                                                                         |
+|-------- |---------------  |---------  |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Number  | `offsetYBounds`   | 50        | the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport                                                                            |
+| Number  | `intensity`       | 30        | the intensity of the parallax effect                                                                                                                                                |
+| Number  | `center`          | 0.5       | the vertical center of the parallax. If you reduce this value the image will be centered when it's more on the top of the screen reducing it will look centered at bottom  |
+
+You can set the Parallax options in this way:
+
+```js
+var p = new Parallax('.parallax', {
+  offsetYBounds: 50,
+  intensity: 30,
+  center: 0.5
+}).init()
+```
+
+Each image could be configured using custom Parallax options (except the `offsetYBounds`) overriding the default:
+
+```html
+<figure>
+  <img class="parallax" data-center="0.8" data-intensity="50" src="path/to/the/image.jpg" />
+</figure>
+<figure>
+  <img class="parallax" data-center="0.2" data-intensity="10" src="path/to/the/image.jpg" />
+</figure>
 ```
 
 ## API
@@ -140,4 +180,20 @@ $ ./make serve # or also `$ npm run serve`
 ```shell
 $ ./make watch # or also `$ npm run watch`
 ```
+
+[travis-image]:https://img.shields.io/travis/GianlucaGuarini/parallax.svg?style=flat-square
+[travis-url]:https://travis-ci.org/GianlucaGuarini/parallax
+
+[license-image]:http://img.shields.io/badge/license-MIT-000000.svg?style=flat-square
+[license-url]:LICENSE
+
+[npm-version-image]:http://img.shields.io/npm/v/scroll-parallax.svg?style=flat-square
+[npm-downloads-image]:http://img.shields.io/npm/dm/scroll-parallax.svg?style=flat-square
+[npm-url]:https://npmjs.org/package/scroll-parallax
+
+[coverage-image]:https://img.shields.io/coveralls/GianlucaGuarini/parallax/master.svg?style=flat-square
+[coverage-url]:https://coveralls.io/r/GianlucaGuarini/parallax?branch=master
+
+[codeclimate-image]:https://img.shields.io/codeclimate/github/GianlucaGuarini/parallax.svg?style=flat-square
+[codeclimate-url]:https://codeclimate.com/github/GianlucaGuarini/parallax
 
