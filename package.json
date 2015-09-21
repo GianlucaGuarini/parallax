@@ -29,6 +29,7 @@
     "babel-loader": "^5.3.2",
     "chai": "^3.2.0",
     "chokidar": "^1.0.5",
+    "coveralls": "^2.11.4",
     "eslint": "^1.4.3",
     "karma": "^0.13.9",
     "karma-babel-preprocessor": "^5.2.2",
