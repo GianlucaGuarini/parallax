@@ -776,8 +776,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createClass(Canvas, [{
 	    key: 'load',
 	    value: function load() {
+	      var _this = this;
 
-	      if (!this.img.width || !this.img.width || !this.img.complete) this.img.onload = this.onImageLoaded.bind(this);else this.onImageLoaded();
+	      if (!this.img.width || !this.img.width || !this.img.complete) this.img.onload = function () {
+	        return _this.onImageLoaded();
+	      };else this.onImageLoaded();
 
 	      return this;
 	    }

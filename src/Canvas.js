@@ -29,7 +29,7 @@ export default class Canvas {
   load() {
 
     if (!this.img.width || !this.img.width || !this.img.complete)
-      this.img.onload = this.onImageLoaded.bind(this)
+      this.img.onload = () => this.onImageLoaded()
     else this.onImageLoaded()
 
     return this

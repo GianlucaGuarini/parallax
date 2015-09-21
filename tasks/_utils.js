@@ -18,7 +18,7 @@ var spawn = require('child_process').spawn,
      * @param  { object } obj
      * @param  { array } optionsPrefix
      * @param  { boolean } hasEquals set the options commands using the equal
-     * @return { array }
+     * @returns { array }
      */
     optionsToArray: function(obj, optionsPrefix, hasEquals) {
       optionsPrefix = optionsPrefix || '--'
@@ -33,8 +33,9 @@ var spawn = require('child_process').spawn,
     },
     /**
      * Simple object extend function
-     * @param  { object } obj1 reciver
-     * @param  { object } obj2
+     * @param  { object } obj1 - source
+     * @param  { object } obj2 - any object
+     * @returns { object } - extended object
      */
     extend: function(obj1, obj2) {
       for (var i in obj2) {
@@ -49,7 +50,7 @@ var spawn = require('child_process').spawn,
      * @param  { string } command string
      * @param  { array } args command arguments
      * @param  { object } envVariables command environment variables
-     * @retur  { promise } chainable promise object
+     * @returns  { promise } chainable promise object
      */
     exec: function(command, args, envVariables) {
 
@@ -81,7 +82,7 @@ var spawn = require('child_process').spawn,
      * Read all the files crawling starting from a certain folder path
      * @param  { string } path directory path
      * @param  { bool } mustDelete delete the files found
-     * @return { array } files path list
+     * @returns { array } files path list
      */
     listFiles: function (path, mustDelete) {
       utils.print('Listing all the files in the folder:' + path, 'confirm')
@@ -106,7 +107,7 @@ var spawn = require('child_process').spawn,
     },
     /**
      * Delete synchronously any folder or file
-     * @param  { string } path
+     * @param  { string } path - path to the folder to remove
      */
     clean: function(path) {
       var files = utils.listFiles(path, true)
@@ -114,7 +115,7 @@ var spawn = require('child_process').spawn,
     },
     /**
      * Log messages in the terminal using custom colors
-     * @param  { String } msg
+     * @param  { String } msg - message to print
      * @param  { String } type - message type to handle the right color
      */
     print: function(msg, type) {
