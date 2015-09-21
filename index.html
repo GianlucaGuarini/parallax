@@ -19,23 +19,31 @@
     </section>
 
     <section class="main-content">
-      <h1>
+      <p><a href="https://travis-ci.org/GianlucaGuarini/parallax"><img src="https://img.shields.io/travis/GianlucaGuarini/parallax.svg?style=flat-square" alt="Build Status"></a>
+<a href="https://npmjs.org/package/scroll-parallax"><img src="http://img.shields.io/npm/v/scroll-parallax.svg?style=flat-square" alt="NPM version"></a>
+<a href="https://npmjs.org/package/scroll-parallax"><img src="http://img.shields.io/npm/dm/scroll-parallax.svg?style=flat-square" alt="NPM downloads"></a>
+<a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-000000.svg?style=flat-square" alt="MIT License"></a>
+<a href="https://coveralls.io/r/GianlucaGuarini/parallax?branch=master"><img src="https://img.shields.io/coveralls/GianlucaGuarini/parallax/master.svg?style=flat-square" alt="Coverage Status"></a>
+<a href="https://codeclimate.com/github/GianlucaGuarini/parallax"><img src="https://img.shields.io/codeclimate/github/GianlucaGuarini/parallax.svg?style=flat-square" alt="Code Quality"></a></p>
+
+<h1>
 <a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why</h1>
 
 <blockquote>
-<p>Oh no, why another parallax library? Do we really need it?</p>
+<p>Oh no, why another parallax script? Do we really need it?</p>
 </blockquote>
 
 <p>There are many parallax scripts but none of them was satisfying my personal needs:</p>
 
 <ul>
 <li>No dependencies</li>
-<li>No background positioning, they cause weird scroll issues on safari</li>
-<li>Modern and flexible api</li>
-<li>Modern and clean source code</li>
+<li>No background positioning and heavy obtrusive DOM manipulations</li>
+<li>Build only for modern devices without internal hacks</li>
+<li>Modern and flexible api being thought mainly for ajax applications</li>
+<li>Modern and clean ES6/2015 source code</li>
 </ul>
 
-<p>So I decided to make my own, and you can be free to use it or simply ignore it!</p>
+<p>So I decided to make my own and you can be free to use it or simply ignore it and move forward to the next one!</p>
 
 <h1>
 <a id="demos" class="anchor" href="#demos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demos</h1>
@@ -60,13 +68,66 @@ $ bower install scroll-parallax --save</pre></div>
 <p>Once you have included the script in your page, you should wrap your parallax images in a wrapper having an <code>height</code>, <code>position:relative or absolute</code> and <code>overflow: hidden</code>
 The images will be stretched to fit always the whole wrapper size</p>
 
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">style</span>=<span class="pl-s"><span class="pl-pds">"</span>position: relative; height: 300px; overflow: hidden;<span class="pl-pds">"</span></span>&gt;
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">figure</span> <span class="pl-e">style</span>=<span class="pl-s"><span class="pl-pds">"</span>position: relative; height: 300px; overflow: hidden;<span class="pl-pds">"</span></span>&gt;
   &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
-&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+&lt;/<span class="pl-ent">figure</span>&gt;</pre></div>
 
 <p>The Parallax api is really simple and the following snippet should be enough:</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()</pre></div>
+
+<h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<p>The options available are only 3 at moment:</p>
+
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Default Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Number</td>
+<td><code>offsetYBounds</code></td>
+<td>50</td>
+<td>the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport</td>
+</tr>
+<tr>
+<td>Number</td>
+<td><code>intensity</code></td>
+<td>30</td>
+<td>the intensity of the parallax effect</td>
+</tr>
+<tr>
+<td>Number</td>
+<td><code>center</code></td>
+<td>0.5</td>
+<td>the vertical center of the parallax. If you reduce this value the image will be centered when it's more on the top of the screen reducing it will look centered at bottom</td>
+</tr>
+</tbody>
+</table>
+
+<p>You can set the Parallax options in this way:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>, {
+  offsetYBounds<span class="pl-k">:</span> <span class="pl-c1">50</span>,
+  intensity<span class="pl-k">:</span> <span class="pl-c1">30</span>,
+  center<span class="pl-k">:</span> <span class="pl-c1">0.5</span>
+}).init()</pre></div>
+
+<p>Each image could be configured using custom Parallax options (except the <code>offsetYBounds</code>) overriding the default:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">figure</span>&gt;
+  &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">data-center</span>=<span class="pl-s"><span class="pl-pds">"</span>0.8<span class="pl-pds">"</span></span> <span class="pl-e">data-intensity</span>=<span class="pl-s"><span class="pl-pds">"</span>50<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
+&lt;/<span class="pl-ent">figure</span>&gt;
+&lt;<span class="pl-ent">figure</span>&gt;
+  &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">data-center</span>=<span class="pl-s"><span class="pl-pds">"</span>0.2<span class="pl-pds">"</span></span> <span class="pl-e">data-intensity</span>=<span class="pl-s"><span class="pl-pds">"</span>10<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
+&lt;/<span class="pl-ent">figure</span>&gt;</pre></div>
 
 <h2>
 <a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
@@ -97,8 +158,7 @@ Currently it supports:</p>
 
 <div class="highlight highlight-source-js"><pre>p.on(<span class="pl-s"><span class="pl-pds">'</span>image:loaded<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">image</span>){
   <span class="pl-c">// do something with the image tag</span>
-})
-p.init()</pre></div>
+})</pre></div>
 
 <h3>
 <a id="parallaxoff" class="anchor" href="#parallaxoff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.off</h3>
@@ -109,8 +169,7 @@ p.init()</pre></div>
     <span class="pl-c">// do something with the image tag just drawn</span>
     p.off(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn) <span class="pl-c">// stop listening the draw event</span>
   }
-p.on(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn)
-p.init()</pre></div>
+p.on(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn)</pre></div>
 
 <h3>
 <a id="parallaxrefresh" class="anchor" href="#parallaxrefresh" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.refresh</h3>
