@@ -11,6 +11,7 @@
   </head>
   <body>
     <section class="page-header">
+      <img style="position:absolute; z-index:-1; top:0;left:0" class="parallax" data-center="0.8" src="demo/img2.jpg" />
       <h1 class="project-name">Parallax</h1>
       <h2 class="project-tagline">ES6/ES2015 HW accelerated scrollable images parallax</h2>
       <a href="https://github.com/GianlucaGuarini/parallax" class="btn">View on GitHub</a>
@@ -107,7 +108,7 @@ The images will be stretched to fit always the whole wrapper size</p>
 <td>Number</td>
 <td><code>center</code></td>
 <td>0.5</td>
-<td>the vertical center of the parallax. If you reduce this value the image will be centered when it's more on the top of the screen reducing it will look centered at bottom</td>
+<td>the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom</td>
 </tr>
 </tbody>
 </table>
@@ -251,6 +252,10 @@ p.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+    <script src="https://rawgit.com/GianlucaGuarini/parallax/master/dist/Parallax.js"></script>
+    <script>
+      var parallax = new Parallax('.parallax').init()
+    </script>
 
   </body>
 </html>
