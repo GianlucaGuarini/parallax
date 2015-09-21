@@ -1,7 +1,7 @@
 {
   "name": "scroll-parallax",
-  "version": "1.0.0-beta.2",
-  "description": " HW accelerated scrollable images parallax using HTML5 canvas — Edit ",
+  "version": "1.0.0",
+  "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "index.js",
   "scripts": {
     "test": "node make test",
@@ -21,7 +21,10 @@
   },
   "keywords": [
     "parallax",
-    "scroll"
+    "scroll",
+    "es6",
+    "modern",
+    "translate3d"
   ],
   "devDependencies": {
     "babel": "^5.8.23",

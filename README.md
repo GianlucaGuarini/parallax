@@ -59,7 +59,7 @@ The options available are only 3 at moment:
 |-------- |---------------  |---------  |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Number  | `offsetYBounds`   | 50        | the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport                                                                            |
 | Number  | `intensity`       | 30        | the intensity of the parallax effect                                                                                                                                                |
-| Number  | `center`          | 0.5       | the vertical center of the parallax. If you reduce this value the image will be centered when it's more on the top of the screen reducing it will look centered at bottom  |
+| Number  | `center`          | 0.5       | the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom  |
 
 You can set the Parallax options in this way:
 
