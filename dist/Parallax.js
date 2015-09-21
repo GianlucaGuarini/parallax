@@ -747,6 +747,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _riotObservable2 = _interopRequireDefault(_riotObservable);
 
+	/**
+	 * Check the translate3d feature
+	 */
+	var HAS_TRANSLATE_3D = (function (div) {
+	  (0, _helpersHelpers.prefix)(div.style, 'transform', 'translate3d(0, 0, 0)');
+	  return (/translate3d/g.test(div.style.cssText)
+	  );
+	})(document.createElement('div'));
+
 	var Canvas = (function () {
 	  function Canvas(img, opts) {
 	    _classCallCheck(this, Canvas);
@@ -830,7 +839,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // increase the percentage effect according to the intensity
 	      // and the current image height
 	      perc *= this.img.height / size.height / 2 * this.opts.intensity;
-	      (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
+
+	      if (HAS_TRANSLATE_3D) (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate3d(0, ' + -perc + '%, 0)');else (0, _helpersHelpers.prefix)(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
 
 	      return this;
 	    }

@@ -5,6 +5,14 @@
 import { prefix } from './helpers/helpers'
 import o from 'riot-observable'
 
+/**
+ * Check the translate3d feature
+ */
+const HAS_TRANSLATE_3D = (function(div) {
+  prefix(div.style, 'transform', 'translate3d(0, 0, 0)')
+  return /translate3d/g.test(div.style.cssText)
+})(document.createElement('div'))
+
 export default class Canvas {
   constructor(img, opts) {
     // make this object observable
@@ -74,7 +82,11 @@ export default class Canvas {
     // increase the percentage effect according to the intensity
     // and the current image height
     perc *= this.img.height / size.height / 2 * this.opts.intensity
-    prefix(this.img.style, 'transform', `translate(0, ${-perc}%)`)
+
+    if (HAS_TRANSLATE_3D)
+      prefix(this.img.style, 'transform', `translate3d(0, ${-perc}%, 0)`)
+    else
+      prefix(this.img.style, 'transform', `translate(0, ${-perc}%)`)
 
     return this
   }

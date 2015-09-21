@@ -63,7 +63,6 @@ Currently it supports:
 p.on('image:loaded', function(image){
   // do something with the image tag
 })
-p.init()
 ```
 
 ### Parallax.off
@@ -76,7 +75,6 @@ var fn = function (image) {
     p.off('draw', fn) // stop listening the draw event
   }
 p.on('draw', fn)
-p.init()
 ```
 
 ### Parallax.refresh
