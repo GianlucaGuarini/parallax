@@ -98,6 +98,7 @@ Currently it supports:
   - `images:loaded`: when all the images get loaded
   - `draw`: when a parallax image comes in the viewport and gets moved
   - `resize`: when the parallax images get resized
+  - `update`: when the page is scrolling and the script has updated all the visible images
 
 ```js
 p.on('image:loaded', function(image){

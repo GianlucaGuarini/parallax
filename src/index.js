@@ -15,16 +15,15 @@ var stage
  * An awesome script
  */
 class Parallax {
-  constructor(els, opts = {}) {
+  constructor(selector, opts = {}) {
 
     // make this object observable
     o(this)
     // set the options extending the _defaults
     this.opts = opts
+    this.selector = selector
     this.canvases = []
-    this.add(els)
-    if (!this.canvases.length)
-      return console.warn(`No images were found with the selector "${els}"`) // undefined
+    this.add(selector)
     // lazy stage instance initialization
     if (!stage)
       stage = new Stage()
@@ -36,8 +35,14 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   init() {
-    this.imagesLoaded = 0
-    this.bind()
+
+    if (!this.canvases.length) {
+      console.warn(`No images were found with the selector "${this.selector}"`)
+    } else {
+      this.imagesLoaded = 0
+      this.bind()
+    }
+
     return this
   }
   /**
@@ -87,14 +92,14 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   scroll(scrollTop) {
-    var i = this.canvases.length
+    var i = this.canvases.length,
+      offsetYBounds = this.opts.offsetYBounds,
+      stageScrollTop = stage.scrollTop
 
     while (i--) {
 
-      var canvas = this.canvases[i],
-        stageScrollTop = stage.scrollTop,
+      let canvas = this.canvases[i],
         canvasHeight = canvas.size.height,
-        offsetYBounds = this.opts.offsetYBounds,
         canvasOffset = canvas.offset,
         canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop
 
@@ -108,6 +113,8 @@ class Parallax {
       }
 
     }
+
+    this.trigger('update', stageScrollTop)
 
     return this
   }
