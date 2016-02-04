@@ -1,5 +1,11 @@
 ## Changelog
 
+### 1.0.3
+  * fixed: destroy method
+
+### 1.0.2
+  * updated: switched from webpack to rollup to get a cleaner dist code
+
 ### 1.0.1
   * added: the parallax `update` event
   * added: the `bower.json` file

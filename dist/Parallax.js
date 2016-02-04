@@ -476,6 +476,7 @@
       key: 'destroy',
       value: function destroy() {
         this.off('*');
+        this.canvases = [];
         stage.off('resize', this._onResize).off('scroll', this._onScroll);
         return this;
       }

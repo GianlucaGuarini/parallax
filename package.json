@@ -1,6 +1,6 @@
 {
   "name": "scroll-parallax",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "minify": "node make minify",
     "saucelabs": "node make saucelabs",
     "default": "node make",
-    "prepublish": "npm run default"
+    "prepublish": "npm run default && npm run minify"
   },
   "repository": {
     "type": "git",

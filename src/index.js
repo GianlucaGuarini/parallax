@@ -150,6 +150,7 @@ class Parallax {
    */
   destroy() {
     this.off('*')
+    this.canvases = []
     stage.off('resize', this._onResize).off('scroll', this._onScroll)
     return this
   }
