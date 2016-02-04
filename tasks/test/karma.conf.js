@@ -18,6 +18,7 @@ module.exports = function(config) {
       testName: process.env.LIBRARY_NAME
     },
     browserNoActivityTimeout: 120000,
+    concurrency: 2,
     customLaunchers: saucelabsBrowsers,
     files: [
       {
@@ -29,23 +30,24 @@ module.exports = function(config) {
       'node_modules/chai/chai.js',
       'node_modules/sinon/pkg/sinon.js',
       'node_modules/sinon-chai/lib/sinon-chai.js',
-      'dist/' + process.env.LIBRARY_NAME + '.js',
+      `dist/${process.env.LIBRARY_NAME}.js`,
       'test/specs/*.js',
       'test/runner.js'
     ],
     browsers: browsers,
     reporters: ['progress', 'saucelabs', 'coverage'],
     preprocessors: {
-      './dist/*.js': ['coverage'],
+      '../dist/*': ['coverage'],
       'test/**/*.js': ['babel']
     },
-    babelPreprocessor: {},
+    'babelPreprocessor': {
+      options: {
+        presets: ['es2015'],
+        sourceMap: 'inline'
+      }
+    },
     coverageReporter: {
-      dir: './coverage',
-      reporters: [{
-        type: 'lcov',
-        subdir: 'report-lcov'
-      }]
+      dir: './coverage/'
     },
     singleRun: true
   })

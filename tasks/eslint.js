@@ -1,4 +1,3 @@
-
 var utils = require('./_utils')
 
 module.exports = function(options) {

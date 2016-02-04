@@ -9,8 +9,8 @@ module.exports = function(options) {
     base: 'dist/'
   }, options)
 
-  var sourcePath = options.base + global.library + '.js',
-    outputPath = options.base + global.library + '.min.js',
+  var sourcePath = `${options.base}${global.library}.js`,
+    outputPath = `${options.base}${global.library}.min.js`,
     output = uglify.minify(sourcePath)
 
   /**
@@ -24,10 +24,9 @@ module.exports = function(options) {
         reject(err)
       } else {
         utils.print('Library minified', 'confirm')
-        utils.print('Created file: ' + outputPath, 'cool')
+        utils.print(`Created file: ${outputPath}`, 'cool')
         resolve()
       }
-
     })
   })
 
