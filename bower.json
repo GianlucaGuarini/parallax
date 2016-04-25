@@ -1,0 +1,19 @@
+{
+  "name": "scroll-parallax",
+  "main": "dist/Parallax.js",
+  "version": "1.0.1",
+  "homepage": "https://github.com/GianlucaGuarini/parallax",
+  "authors": [
+    "Gianluca Guarini <gianluca.guarini@gmail.com>"
+  ],
+  "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

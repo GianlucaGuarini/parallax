@@ -1,0 +1,63 @@
+{
+  "name": "scroll-parallax",
+  "version": "1.1.0",
+  "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
+  "main": "index.js",
+  "jsnext:main": "src/index.js",
+  "scripts": {
+    "test": "node make test",
+    "test-coveralls": "PARALLAX_COV=1 cat ./coverage/report-lcov/lcov.info | coveralls",
+    "serve": "node make serve",
+    "eslint": "node make eslint",
+    "build": "node make build",
+    "watch": "node make watch",
+    "minify": "node make minify",
+    "saucelabs": "node make saucelabs",
+    "default": "node make",
+    "prepublish": "npm run default && npm run minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Goldinteractive/parallax.git"
+  },
+  "keywords": [
+    "parallax",
+    "scroll",
+    "es6",
+    "modern",
+    "translate3d"
+  ],
+  "devDependencies": {
+    "babel-core": "^6.7.7",
+    "babel-plugin-transform-es2015-modules-umd": "^6.6.5",
+    "babel-preset-es2015": "^6.6.0",
+    "chai": "^3.5.0",
+    "chokidar": "^1.4.3",
+    "eslint": "^2.8.0",
+    "karma": "^0.13.22",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-coverage": "^0.5.5",
+    "karma-mocha": "^0.2.2",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-sauce-launcher": "^0.3.1",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7",
+    "rollup": "^0.26.0",
+    "rollup-plugin-commonjs": "^2.2.1",
+    "rollup-plugin-npm": "^1.4.0",
+    "serve": "^1.4.0",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
+    "uglify-js": "^2.6.2"
+  },
+  "author": "Gianluca Guarini (http://gianlucaguarini.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GianlucaGuarini/parallax/issues"
+  },
+  "homepage": "https://github.com/GianlucaGuarini/parallax",
+  "dependencies": {
+    "riot-observable": "^2.4.2"
+  }
+}

@@ -1,0 +1,10 @@
+engines:
+  eslint:
+    enabled: true
+
+ratings:
+  paths:
+  - "src/**.js"
+
+exclude_paths:
+  - "dist/**"
