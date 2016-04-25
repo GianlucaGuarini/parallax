@@ -60,9 +60,15 @@
     return typeof val == 'undefined';
   }
 
+  function toCamel(string) {
+    return string.replace(/-(\w)/g, function (_, c) {
+      return c.toUpperCase();
+    });
+  }
+
   function elementData(el, attr) {
     if (attr) return el.dataset[attr] || el.getAttribute('data-' + attr);else return el.dataset || Array.prototype.slice.call(el.attributes).reduce(function (ret, attribute) {
-      if (/data-/.test(attribute.name)) ret[attribute.name] = attribute.value;
+      if (/data-/.test(attribute.name)) ret[toCamel(attribute.name)] = attribute.value;
       return ret;
     }, {});
   }
@@ -332,18 +338,32 @@
         var iw = this.img.naturalWidth || this.img.width,
             ih = this.img.naturalHeight || this.img.height,
             ratio = iw / ih,
-            size = this.size;
+            size = this.size,
+            nh,
+            nw,
+            offsetTop,
+            offsetLeft;
 
         if (size.width / ratio <= size.height) {
-          this.img.height = size.height;
-          this.img.width = size.height * ratio;
+          nw = size.height * ratio;
+          nh = size.height;
         } else {
-          this.img.width = size.width;
-          this.img.height = size.width / ratio;
+          nw = size.width;
+          nh = size.width / ratio;
         }
 
-        this.img.style.top = - ~ ~((this.img.height - size.height) / 2) + 'px';
-        this.img.style.left = - ~ ~((this.img.width - size.width) / 2) + 'px';
+        if (nh <= size.height + size.height * this.opts.safeHeight) {
+          nw += nw * this.opts.safeHeight;
+          nh += nh * this.opts.safeHeight;
+        }
+
+        offsetTop = - ~ ~((nh - size.height) / 2);
+        offsetLeft = - ~ ~((nw - size.width) / 2);
+
+        this.img.width = nw;
+        this.img.height = nh;
+        this.img.style.top = offsetTop + 'px';
+        this.img.style.left = offsetLeft + 'px';
 
         return this;
       }
@@ -541,7 +561,8 @@
           var data = elementData(el);
           return new Canvas(el, {
             intensity: !isUndefined(data.intensity) ? +data.intensity : _this7.opts.intensity,
-            center: !isUndefined(data.center) ? +data.center : _this7.opts.center
+            center: !isUndefined(data.center) ? +data.center : _this7.opts.center,
+            safeHeight: !isUndefined(data.safeHeight) ? +data.safeHeight : _this7.opts.safeHeight
           });
         });
       }
@@ -551,8 +572,9 @@
         this._defaults = {
           offsetYBounds: 50,
           intensity: 30,
-          center: 0.5
-        };
+          center: 0.5,
+
+          safeHeight: 0.15 };
         extend(this._defaults, opts);
       },
       get: function get() {

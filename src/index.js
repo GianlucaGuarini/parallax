@@ -179,7 +179,8 @@ class Parallax {
       var data = elementData(el)
       return new Canvas(el, {
         intensity: !isUndefined(data.intensity) ? +data.intensity : this.opts.intensity,
-        center: !isUndefined(data.center) ? +data.center : this.opts.center
+        center: !isUndefined(data.center) ? +data.center : this.opts.center,
+        safeHeight: !isUndefined(data.safeHeight) ? +data.safeHeight : this.opts.safeHeight
       })
     })
   }
@@ -191,7 +192,10 @@ class Parallax {
     this._defaults = {
       offsetYBounds: 50,
       intensity: 30,
-      center: 0.5
+      center: 0.5,
+      // make sure that the images can always properly parallax
+      // They should be at least 15% higher than their wrappers (7.5% bottom + 7.5% top)
+      safeHeight: 0.15 // 15%
     }
     extend(this._defaults, opts)
   }

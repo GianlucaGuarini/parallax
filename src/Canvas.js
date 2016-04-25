@@ -53,18 +53,36 @@ export default class Canvas {
     var iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
       ratio = iw / ih,
-      size = this.size
+      size = this.size,
+      nh,
+      nw,
+      offsetTop,
+      offsetLeft
 
+    // calculate the new width and the height
+    // keeping the image ratio
     if (size.width / ratio <= size.height) {
-      this.img.height = size.height
-      this.img.width = size.height * ratio
+      nw = size.height * ratio
+      nh = size.height
     } else {
-      this.img.width = size.width
-      this.img.height = size.width / ratio
+      nw = size.width
+      nh = size.width / ratio
     }
 
-    this.img.style.top = `${-~~((this.img.height - size.height) / 2)}px`
-    this.img.style.left = `${-~~((this.img.width - size.width) / 2)}px`
+    // zoom the image if necessary
+    if (nh <= size.height + size.height * this.opts.safeHeight) {
+      nw += nw * this.opts.safeHeight
+      nh += nh * this.opts.safeHeight
+    }
+
+    // calculate the offset top/left rounding it
+    offsetTop = -~~((nh - size.height) / 2)
+    offsetLeft = -~~((nw - size.width) / 2)
+
+    this.img.width = nw
+    this.img.height = nh
+    this.img.style.top = `${offsetTop}px`
+    this.img.style.left = `${offsetLeft}px`
 
     return this
   }

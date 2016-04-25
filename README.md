@@ -53,13 +53,14 @@ var p = new Parallax('.parallax').init()
 
 ## Options
 
-The options available are only 3 at moment:
+The options available are only 4 at moment:
 
 | Type    | Name            | Default Value   | Description                                                                                                                                                                         |
-|-------- |---------------  |---------  |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Number  | `offsetYBounds`   | 50        | the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport                                                                            |
-| Number  | `intensity`       | 30        | the intensity of the parallax effect                                                                                                                                                |
-| Number  | `center`          | 0.5       | the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom  |
+|-------- |---------------- |---------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Number  | `offsetYBounds` | 50              | the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport                                                                            |
+| Number  | `intensity`     | 30              | the intensity of the parallax effect                                                                                                                                                |
+| Number  | `center`        | 0.5             | the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom __this value should be between 0 and 1__ |
+| Number  | `safeHeight`    | 0.15            | the safe image height gap value in percentage that ensures it can always properly parallax. Any image should be (by default) at least 15% higher than their DOM wrappers (7.5% bottom + 7.5% top) |
 
 You can set the Parallax options in this way:
 
@@ -67,18 +68,19 @@ You can set the Parallax options in this way:
 var p = new Parallax('.parallax', {
   offsetYBounds: 50,
   intensity: 30,
-  center: 0.5
+  center: 0.5,
+  safeHeight: 0.15
 }).init()
 ```
 
-Each image could be configured using custom Parallax options (except the `offsetYBounds`) overriding the default:
+Each image could be configured using custom Parallax options (except for the `offsetYBounds`) overriding the defaults:
 
 ```html
 <figure>
   <img class="parallax" data-center="0.8" data-intensity="50" src="path/to/the/image.jpg" />
 </figure>
 <figure>
-  <img class="parallax" data-center="0.2" data-intensity="10" src="path/to/the/image.jpg" />
+  <img class="parallax" data-center="0.2" data-intensity="10" data-safe-height="0.2" src="path/to/the/image.jpg" />
 </figure>
 ```
 

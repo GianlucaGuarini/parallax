@@ -56,6 +56,18 @@ export function extend(src) {
 export function isUndefined(val) {
   return typeof val == 'undefined'
 }
+
+/**
+ * Convert a string containing dashes to camel case
+ * @param   { String } string - input string
+ * @returns { String } my-string -> myString
+ */
+export function toCamel(string) {
+  return string.replace(/-(\w)/g, function(_, c) {
+    return c.toUpperCase()
+  })
+}
+
 /**
  * Get the data-* of any DOM element
  * @param   { Object } el - DOM element we want to parse
@@ -68,7 +80,7 @@ export function elementData(el, attr) {
   else
     return el.dataset || Array.prototype.slice.call(el.attributes).reduce((ret, attribute) => {
       if (/data-/.test(attribute.name))
-        ret[attribute.name] = attribute.value
+        ret[toCamel(attribute.name)] = attribute.value
       return ret
     }, {})
 }

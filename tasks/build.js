@@ -52,8 +52,14 @@ module.exports = function(options) {
       ).code
 
       mkdirp('./dist', function() {
-        fs.writeFileSync(`./dist/${ global.library }.js`, result, 'utf8')
-        resolve()
+        try {
+          fs.writeFileSync(`./dist/${ global.library }.js`, result, 'utf8')
+          resolve()
+        } catch (e) {
+          utils.print(e, 'error')
+          reject()
+        }
+
       })
 
     }).catch(e =>{ utils.print(e, 'error') })

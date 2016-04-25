@@ -1,8 +1,9 @@
 {
   "name": "scroll-parallax",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "index.js",
+  "jsnext:main": "src/index.js",
   "scripts": {
     "test": "node make test",
     "test-coveralls": "PARALLAX_COV=1 cat ./coverage/report-lcov/lcov.info | coveralls",
