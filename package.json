@@ -53,9 +53,9 @@
   "author": "Gianluca Guarini (http://gianlucaguarini.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Goldinteractive/parallax/issues"
+    "url": "https://github.com/GianlucaGuarini/parallax/issues"
   },
-  "homepage": "https://github.com/Goldinteractive/parallax",
+  "homepage": "https://github.com/GianlucaGuarini/parallax",
   "dependencies": {
     "riot-observable": "^2.4.2"
   }
