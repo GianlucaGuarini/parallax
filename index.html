@@ -11,6 +11,7 @@
   </head>
   <body>
     <section class="page-header">
+      <img style="position:absolute; z-index:-1; top:0;left:0" class="parallax" data-center="0.8" src="demo/img2.jpg" />
       <h1 class="project-name">Parallax</h1>
       <h2 class="project-tagline">ES6/ES2015 HW accelerated scrollable images parallax</h2>
       <a href="https://github.com/GianlucaGuarini/parallax" class="btn">View on GitHub</a>
@@ -260,6 +261,10 @@ Currently it supports:</p>
               var pageTracker = _gat._getTracker("UA-8059670-3");
             pageTracker._trackPageview();
             } catch(err) {}
+          </script>
+          <script src="https://rawgit.com/GianlucaGuarini/parallax/master/dist/Parallax.js"></script>
+          <script>
+           var parallax = new Parallax('.parallax').init()
           </script>
 
   </body>
