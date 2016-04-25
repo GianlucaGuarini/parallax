@@ -56,8 +56,7 @@ module.exports = function(options) {
           fs.writeFileSync(`./dist/${ global.library }.js`, result, 'utf8')
           resolve()
         } catch (e) {
-          utils.print(e, 'error')
-          reject()
+          reject(e)
         }
 
       })
