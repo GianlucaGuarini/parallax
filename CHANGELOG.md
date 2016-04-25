@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.0.4
+  * updated: riot-observable dependecy to get faster performances (30% faster)
+
 ### 1.0.3
   * fixed: destroy method
 

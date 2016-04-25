@@ -46,7 +46,6 @@
   function extend(src) {
     var obj,
         args = arguments;
-
     for (var i = 1; i < args.length; ++i) {
       if (obj = args[i]) {
         for (var key in obj) {
@@ -54,7 +53,6 @@
         }
       }
     }
-
     return src;
   }
 
@@ -72,96 +70,128 @@
   function prefix(obj, prop, value) {
     var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
         i = prefixes.length;
-
     while (i--) {
       var prefix = prefixes[i],
           p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1);
-
       if (p in obj) {
         obj[p] = value;
         return true;
       }
     }
-
     return false;
   }
 
   var observable = function observable(el) {
+
     el = el || {};
 
     var callbacks = {},
-        slice = Array.prototype.slice,
-        onEachEvent = function onEachEvent(e, fn) {
-      e.replace(/\S+/g, fn);
-    },
-        defineProperty = function defineProperty(key, value) {
-      Object.defineProperty(el, key, {
-        value: value,
+        slice = Array.prototype.slice;
+
+    function onEachEvent(e, fn) {
+      var es = e.split(' '),
+          l = es.length,
+          i = 0,
+          name,
+          indx;
+      for (; i < l; i++) {
+        name = es[i];
+        indx = name.indexOf('.');
+        if (name) fn(~indx ? name.substring(0, indx) : name, i, ~indx ? name.slice(indx + 1) : null);
+      }
+    }
+
+    Object.defineProperties(el, {
+      on: {
+        value: function value(events, fn) {
+          if (typeof fn != 'function') return el;
+
+          onEachEvent(events, function (name, pos, ns) {
+            (callbacks[name] = callbacks[name] || []).push(fn);
+            fn.typed = pos > 0;
+            fn.ns = ns;
+          });
+
+          return el;
+        },
         enumerable: false,
         writable: false,
         configurable: false
-      });
-    };
+      },
 
-    defineProperty('on', function (events, fn) {
-      if (typeof fn != 'function') return el;
-      onEachEvent(events, function (name, pos) {
-        (callbacks[name] = callbacks[name] || []).push(fn);
-        fn.typed = pos > 0;
-      });
-      return el;
-    });
-    defineProperty('off', function (events, fn) {
-      if (events == '*' && !fn) callbacks = {};else {
-        onEachEvent(events, function (name) {
-          if (fn) {
-            var arr = callbacks[name];
+      off: {
+        value: function value(events, fn) {
+          if (events == '*' && !fn) callbacks = {};else {
+            onEachEvent(events, function (name, pos, ns) {
+              if (fn || ns) {
+                var arr = callbacks[name];
+                for (var i = 0, cb; cb = arr && arr[i]; ++i) {
+                  if (cb == fn || ns && cb.ns == ns) arr.splice(i--, 1);
+                }
+              } else delete callbacks[name];
+            });
+          }
+          return el;
+        },
+        enumerable: false,
+        writable: false,
+        configurable: false
+      },
 
-            for (var i = 0, cb; cb = arr && arr[i]; ++i) {
-              if (cb == fn) arr.splice(i--, 1);
-            }
-          } else delete callbacks[name];
-        });
-      }
-      return el;
-    });
-    defineProperty('one', function (events, fn) {
-      function on() {
-        el.off(events, on);
-        fn.apply(el, arguments);
-      }
+      one: {
+        value: function value(events, fn) {
+          function on() {
+            el.off(events, on);
+            fn.apply(el, arguments);
+          }
+          return el.on(events, on);
+        },
+        enumerable: false,
+        writable: false,
+        configurable: false
+      },
 
-      return el.on(events, on);
-    });
-    defineProperty('trigger', function (events) {
-      var args = slice.call(arguments, 1),
-          fns;
-      onEachEvent(events, function (name) {
-        fns = slice.call(callbacks[name] || [], 0);
+      trigger: {
+        value: function value(events) {
+          var arglen = arguments.length - 1,
+              args = new Array(arglen),
+              fns;
 
-        for (var i = 0, fn; fn = fns[i]; ++i) {
-          if (fn.busy) return;
-          fn.busy = 1;
-          fn.apply(el, fn.typed ? [name].concat(args) : args);
-
-          if (fns[i] !== fn) {
-            i--;
+          for (var i = 0; i < arglen; i++) {
+            args[i] = arguments[i + 1];
           }
 
-          fn.busy = 0;
-        }
+          onEachEvent(events, function (name, pos, ns) {
 
-        if (callbacks['*'] && name != '*') el.trigger.apply(el, ['*', name].concat(args));
-      });
-      return el;
+            fns = slice.call(callbacks[name] || [], 0);
+
+            for (var i = 0, fn; fn = fns[i]; ++i) {
+              if (fn.busy) continue;
+              fn.busy = 1;
+              if (!ns || fn.ns == ns) fn.apply(el, fn.typed ? [name].concat(args) : args);
+              if (fns[i] !== fn) {
+                i--;
+              }
+              fn.busy = 0;
+            }
+
+            if (callbacks['*'] && name != '*') el.trigger.apply(el, ['*', name].concat(args));
+          });
+
+          return el;
+        },
+        enumerable: false,
+        writable: false,
+        configurable: false
+      }
     });
+
     return el;
   };
 
   var rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame || function (cb) {
     setTimeout(cb, 1000 / 60);
   };
-
   var RESIZE_DELAY = 20;
 
   var Stage = function () {
@@ -194,7 +224,6 @@
         window.addEventListener('orientationchange', function () {
           return _this.resize();
         }, true);
-
         window.onload = function () {
           return _this.scroll();
         };
@@ -285,6 +314,7 @@
         if (!this.img.width || !this.img.height || !this.img.complete) this.img.onload = function () {
           return _this4.onImageLoaded();
         };else this.onImageLoaded();
+
         return this;
       }
     }, {
@@ -298,6 +328,7 @@
     }, {
       key: 'update',
       value: function update() {
+
         var iw = this.img.naturalWidth || this.img.width,
             ih = this.img.naturalHeight || this.img.height,
             ratio = iw / ih,
@@ -313,6 +344,7 @@
 
         this.img.style.top = - ~ ~((this.img.height - size.height) / 2) + 'px';
         this.img.style.left = - ~ ~((this.img.width - size.width) / 2) + 'px';
+
         return this;
       }
     }, {
@@ -320,8 +352,11 @@
       value: function draw(stage) {
         var size = this.size,
             perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
+
         perc *= this.img.height / size.height / 2 * this.opts.intensity;
+
         if (HAS_TRANSLATE_3D) prefix(this.img.style, 'transform', 'translate3d(0, ' + -perc + '%, 0)');else prefix(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
+
         return this;
       }
     }, {
@@ -360,17 +395,21 @@
       _classCallCheck(this, Parallax);
 
       observable(this);
+
       this.opts = opts;
       this.selector = selector;
       this.canvases = [];
       this.add(selector);
+
       if (!stage) stage = new Stage();
+
       return this;
     }
 
     _createClass(Parallax, [{
       key: 'init',
       value: function init() {
+
         if (!this.canvases.length) {
           console.warn('No images were found with the selector "' + this.selector + '"');
         } else {
@@ -392,7 +431,6 @@
 
           return _this5.resize.apply(_this5, args);
         };
-
         this._onScroll = function () {
           for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
             args[_key2] = arguments[_key2];
@@ -403,12 +441,14 @@
 
         stage.on('resize', this._onResize);
         stage.on('scroll', this._onScroll);
+
         this.canvases.forEach(function (canvas) {
           canvas.one('loaded', function () {
             return _this5.onCanvasLoaded(canvas);
           });
           canvas.load();
         });
+
         return this;
       }
     }, {
@@ -434,6 +474,7 @@
             stageScrollTop = stage.scrollTop;
 
         while (i--) {
+
           var canvas = this.canvases[i],
               canvasHeight = canvas.size.height,
               canvasOffset = canvas.offset,
@@ -446,6 +487,7 @@
         }
 
         this.trigger('update', stageScrollTop);
+
         return this;
       }
     }, {
@@ -461,11 +503,9 @@
 
         $$(els).forEach(function (el) {
           var i = _this6.canvases.length;
-
           while (i--) {
             if (el == _this6.canvases[i].img) {
               _this6.canvases.splice(i, 1);
-
               break;
             }
           }
@@ -484,13 +524,11 @@
       key: 'resize',
       value: function resize(size) {
         var i = this.canvases.length;
-
         while (i--) {
           var canvas = this.canvases[i];
           if (!canvas.isLoaded) return;
           canvas.update().draw(stage);
         }
-
         this.trigger('resize');
         return this;
       }
