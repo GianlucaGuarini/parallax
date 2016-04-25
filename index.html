@@ -11,7 +11,6 @@
   </head>
   <body>
     <section class="page-header">
-      <img style="position:absolute; z-index:-1; top:0;left:0" class="parallax" data-center="0.8" src="demo/img2.jpg" />
       <h1 class="project-name">Parallax</h1>
       <h2 class="project-tagline">ES6/ES2015 HW accelerated scrollable images parallax</h2>
       <a href="https://github.com/GianlucaGuarini/parallax" class="btn">View on GitHub</a>
@@ -28,7 +27,7 @@
 <a href="https://codeclimate.com/github/GianlucaGuarini/parallax"><img src="https://img.shields.io/codeclimate/github/GianlucaGuarini/parallax.svg?style=flat-square" alt="Code Quality"></a></p>
 
 <h1>
-<a id="why" class="anchor" href="#why" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why</h1>
+<a id="why" class="anchor" href="#why" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why</h1>
 
 <blockquote>
 <p>Oh no, why another parallax script? Do we really need it?</p>
@@ -47,24 +46,24 @@
 <p>So I decided to make my own and you can be free to use it or simply ignore it and move forward to the next one!</p>
 
 <h1>
-<a id="demos" class="anchor" href="#demos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demos</h1>
+<a id="demos" class="anchor" href="#demos" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demos</h1>
 
 <ul>
 <li><a href="http://gianlucaguarini.github.io/parallax/demo">demo</a></li>
 </ul>
 
 <h1>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h1>
 
 <h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
 <div class="highlight highlight-source-shell"><pre>$ npm install scroll-parallax --save
 <span class="pl-c"># or</span>
 $ bower install scroll-parallax --save</pre></div>
 
 <h2>
-<a id="markup-and-initialization" class="anchor" href="#markup-and-initialization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Markup and initialization</h2>
+<a id="markup-and-initialization" class="anchor" href="#markup-and-initialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Markup and initialization</h2>
 
 <p>Once you have included the script in your page, you should wrap your parallax images in a wrapper having an <code>height</code>, <code>position:relative or absolute</code> and <code>overflow: hidden</code>
 The images will be stretched to fit always the whole wrapper size</p>
@@ -75,12 +74,12 @@ The images will be stretched to fit always the whole wrapper size</p>
 
 <p>The Parallax api is really simple and the following snippet should be enough:</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).init()</pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>).<span class="pl-en">init</span>()</pre></div>
 
 <h2>
-<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h2>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Options</h2>
 
-<p>The options available are only 3 at moment:</p>
+<p>The options available are only 4 at moment:</p>
 
 <table>
 <thead>
@@ -108,7 +107,14 @@ The images will be stretched to fit always the whole wrapper size</p>
 <td>Number</td>
 <td><code>center</code></td>
 <td>0.5</td>
-<td>the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom</td>
+<td>the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom <strong>this value should be between 0 and 1</strong>
+</td>
+</tr>
+<tr>
+<td>Number</td>
+<td><code>safeHeight</code></td>
+<td>0.15</td>
+<td>the safe image height gap value in percentage that ensures it can always properly parallax. Any image should be (by default) at least 15% higher than their DOM wrappers (7.5% bottom + 7.5% top)</td>
 </tr>
 </tbody>
 </table>
@@ -118,30 +124,31 @@ The images will be stretched to fit always the whole wrapper size</p>
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> p <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Parallax</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax<span class="pl-pds">'</span></span>, {
   offsetYBounds<span class="pl-k">:</span> <span class="pl-c1">50</span>,
   intensity<span class="pl-k">:</span> <span class="pl-c1">30</span>,
-  center<span class="pl-k">:</span> <span class="pl-c1">0.5</span>
-}).init()</pre></div>
+  center<span class="pl-k">:</span> <span class="pl-c1">0.5</span>,
+  safeHeight<span class="pl-k">:</span> <span class="pl-c1">0.15</span>
+}).<span class="pl-en">init</span>()</pre></div>
 
-<p>Each image could be configured using custom Parallax options (except the <code>offsetYBounds</code>) overriding the default:</p>
+<p>Each image could be configured using custom Parallax options (except for the <code>offsetYBounds</code>) overriding the defaults:</p>
 
 <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">figure</span>&gt;
   &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">data-center</span>=<span class="pl-s"><span class="pl-pds">"</span>0.8<span class="pl-pds">"</span></span> <span class="pl-e">data-intensity</span>=<span class="pl-s"><span class="pl-pds">"</span>50<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
 &lt;/<span class="pl-ent">figure</span>&gt;
 &lt;<span class="pl-ent">figure</span>&gt;
-  &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">data-center</span>=<span class="pl-s"><span class="pl-pds">"</span>0.2<span class="pl-pds">"</span></span> <span class="pl-e">data-intensity</span>=<span class="pl-s"><span class="pl-pds">"</span>10<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
+  &lt;<span class="pl-ent">img</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>parallax<span class="pl-pds">"</span></span> <span class="pl-e">data-center</span>=<span class="pl-s"><span class="pl-pds">"</span>0.2<span class="pl-pds">"</span></span> <span class="pl-e">data-intensity</span>=<span class="pl-s"><span class="pl-pds">"</span>10<span class="pl-pds">"</span></span> <span class="pl-e">data-safe-height</span>=<span class="pl-s"><span class="pl-pds">"</span>0.2<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>path/to/the/image.jpg<span class="pl-pds">"</span></span> /&gt;
 &lt;/<span class="pl-ent">figure</span>&gt;</pre></div>
 
 <h2>
-<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>API</h2>
 
 <p>Each Parallax instance has some useful methods that could be used to adapt it to your application needs</p>
 
 <h3>
-<a id="parallaxinit" class="anchor" href="#parallaxinit" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.init</h3>
+<a id="parallaxinit" class="anchor" href="#parallaxinit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.init</h3>
 
 <p>Initialize the parallax internal event listeners. The listeners to <code>image:loaded</code> and <code>images:loaded</code> should be set before this method gets called</p>
 
 <h3>
-<a id="parallaxon" class="anchor" href="#parallaxon" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.on</h3>
+<a id="parallaxon" class="anchor" href="#parallaxon" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.on</h3>
 
 <p>The <code>on</code> method allows you to listen the internal Parallax events from the outside.<br>
 Currently it supports:</p>
@@ -155,83 +162,84 @@ Currently it supports:</p>
 <code>draw</code>: when a parallax image comes in the viewport and gets moved</li>
 <li>
 <code>resize</code>: when the parallax images get resized</li>
+<li>
 <code>update</code>: when the page is scrolling and the script has updated all the visible images</li>
 </ul>
 
-<div class="highlight highlight-source-js"><pre>p.on(<span class="pl-s"><span class="pl-pds">'</span>image:loaded<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">image</span>){
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">p</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>image:loaded<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">image</span>){
   <span class="pl-c">// do something with the image tag</span>
 })</pre></div>
 
 <h3>
-<a id="parallaxoff" class="anchor" href="#parallaxoff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.off</h3>
+<a id="parallaxoff" class="anchor" href="#parallaxoff" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.off</h3>
 
 <p>Stop listening an internal Parallax event</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">fn</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (<span class="pl-smi">image</span>) {
     <span class="pl-c">// do something with the image tag just drawn</span>
-    p.off(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn) <span class="pl-c">// stop listening the draw event</span>
+    <span class="pl-smi">p</span>.<span class="pl-en">off</span>(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn) <span class="pl-c">// stop listening the draw event</span>
   }
-p.on(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn)</pre></div>
+<span class="pl-smi">p</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>draw<span class="pl-pds">'</span></span>, fn)</pre></div>
 
 <h3>
-<a id="parallaxrefresh" class="anchor" href="#parallaxrefresh" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.refresh</h3>
+<a id="parallaxrefresh" class="anchor" href="#parallaxrefresh" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.refresh</h3>
 
 <p>Refresh the position of the images visible in the viewport</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-c">// do extremely heavy dom updates</span>
-p.refresh()</pre></div>
+<span class="pl-smi">p</span>.<span class="pl-en">refresh</span>()</pre></div>
 
 <h3>
-<a id="parallaxadd" class="anchor" href="#parallaxadd" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.add</h3>
+<a id="parallaxadd" class="anchor" href="#parallaxadd" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.add</h3>
 
 <p>Add new images to the parallax instance</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-c">// inject new images</span>
-p.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>)</pre></div>
+<span class="pl-smi">p</span>.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>)</pre></div>
 
 <h3>
-<a id="parallaxremove" class="anchor" href="#parallaxremove" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.remove</h3>
+<a id="parallaxremove" class="anchor" href="#parallaxremove" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.remove</h3>
 
 <p>Remove images from the parallax instance</p>
 
-<div class="highlight highlight-source-js"><pre>p.remove(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>) <span class="pl-c">// remove the images from the parallax</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">p</span>.<span class="pl-en">remove</span>(<span class="pl-s"><span class="pl-pds">'</span>.parallax-2<span class="pl-pds">'</span></span>) <span class="pl-c">// remove the images from the parallax</span>
 <span class="pl-c">// and also from the DOM...</span></pre></div>
 
 <h3>
-<a id="parallaxdestroy" class="anchor" href="#parallaxdestroy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parallax.destroy</h3>
+<a id="parallaxdestroy" class="anchor" href="#parallaxdestroy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parallax.destroy</h3>
 
 <p>Destroy the parallax instance removing all the internal and external callbacks to its internal events</p>
 
-<div class="highlight highlight-source-js"><pre>p.destroy() <span class="pl-c">// the parallax is dead!</span></pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">p</span>.<span class="pl-en">destroy</span>() <span class="pl-c">// the parallax is dead!</span></pre></div>
 
 <h1>
-<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h1>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h1>
 
 <h2>
-<a id="available-tasks" class="anchor" href="#available-tasks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Available tasks</h2>
+<a id="available-tasks" class="anchor" href="#available-tasks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Available tasks</h2>
 
 <h3>
-<a id="build-and-test" class="anchor" href="#build-and-test" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build and test</h3>
+<a id="build-and-test" class="anchor" href="#build-and-test" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build and test</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ ./make <span class="pl-c"># or also `$ npm run default`</span></pre></div>
 
 <h3>
-<a id="convert-the-es6-code-into-valid-es5-combining-all-the-modules-into-one-single-file" class="anchor" href="#convert-the-es6-code-into-valid-es5-combining-all-the-modules-into-one-single-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Convert the ES6 code into valid ES5 combining all the modules into one single file</h3>
+<a id="convert-the-es6-code-into-valid-es5-combining-all-the-modules-into-one-single-file" class="anchor" href="#convert-the-es6-code-into-valid-es5-combining-all-the-modules-into-one-single-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Convert the ES6 code into valid ES5 combining all the modules into one single file</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ ./make build <span class="pl-c"># or also `$ npm run build`</span></pre></div>
 
 <h3>
-<a id="run-all-the-tests" class="anchor" href="#run-all-the-tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Run all the tests</h3>
+<a id="run-all-the-tests" class="anchor" href="#run-all-the-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Run all the tests</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ ./make <span class="pl-c1">test</span> <span class="pl-c"># or also `$ npm run test`</span></pre></div>
 
 <h3>
-<a id="start-a-nodejs-static-server" class="anchor" href="#start-a-nodejs-static-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start a nodejs static server</h3>
+<a id="start-a-nodejs-static-server" class="anchor" href="#start-a-nodejs-static-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Start a nodejs static server</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ ./make serve <span class="pl-c"># or also `$ npm run serve`</span></pre></div>
 
 <h3>
-<a id="to-compile-andor-test-the-project-anytime-a-file-gets-changed" class="anchor" href="#to-compile-andor-test-the-project-anytime-a-file-gets-changed" aria-hidden="true"><span class="octicon octicon-link"></span></a>To compile and/or test the project anytime a file gets changed</h3>
+<a id="to-compile-andor-test-the-project-anytime-a-file-gets-changed" class="anchor" href="#to-compile-andor-test-the-project-anytime-a-file-gets-changed" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>To compile and/or test the project anytime a file gets changed</h3>
 
 <div class="highlight highlight-source-shell"><pre>$ ./make watch <span class="pl-c"># or also `$ npm run watch`</span></pre></div>
 
@@ -253,10 +261,6 @@ p.<span class="pl-c1">add</span>(<span class="pl-s"><span class="pl-pds">'</span
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-    <script src="https://rawgit.com/GianlucaGuarini/parallax/master/dist/Parallax.js"></script>
-    <script>
-      var parallax = new Parallax('.parallax').init()
-    </script>
 
   </body>
 </html>
