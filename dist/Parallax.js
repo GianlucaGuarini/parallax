@@ -94,30 +94,10 @@
     var callbacks = {},
         slice = Array.prototype.slice;
 
-    function onEachEvent(e, fn) {
-      var es = e.split(' '),
-          l = es.length,
-          i = 0,
-          name,
-          indx;
-      for (; i < l; i++) {
-        name = es[i];
-        indx = name.indexOf('.');
-        if (name) fn(~indx ? name.substring(0, indx) : name, i, ~indx ? name.slice(indx + 1) : null);
-      }
-    }
-
     Object.defineProperties(el, {
       on: {
-        value: function value(events, fn) {
-          if (typeof fn != 'function') return el;
-
-          onEachEvent(events, function (name, pos, ns) {
-            (callbacks[name] = callbacks[name] || []).push(fn);
-            fn.typed = pos > 0;
-            fn.ns = ns;
-          });
-
+        value: function value(event, fn) {
+          if (typeof fn == 'function') (callbacks[event] = callbacks[event] || []).push(fn);
           return el;
         },
         enumerable: false,
@@ -126,16 +106,14 @@
       },
 
       off: {
-        value: function value(events, fn) {
-          if (events == '*' && !fn) callbacks = {};else {
-            onEachEvent(events, function (name, pos, ns) {
-              if (fn || ns) {
-                var arr = callbacks[name];
-                for (var i = 0, cb; cb = arr && arr[i]; ++i) {
-                  if (cb == fn || ns && cb.ns == ns) arr.splice(i--, 1);
-                }
-              } else delete callbacks[name];
-            });
+        value: function value(event, fn) {
+          if (event == '*' && !fn) callbacks = {};else {
+            if (fn) {
+              var arr = callbacks[event];
+              for (var i = 0, cb; cb = arr && arr[i]; ++i) {
+                if (cb == fn) arr.splice(i--, 1);
+              }
+            } else delete callbacks[event];
           }
           return el;
         },
@@ -145,12 +123,12 @@
       },
 
       one: {
-        value: function value(events, fn) {
+        value: function value(event, fn) {
           function on() {
-            el.off(events, on);
+            el.off(event, on);
             fn.apply(el, arguments);
           }
-          return el.on(events, on);
+          return el.on(event, on);
         },
         enumerable: false,
         writable: false,
@@ -158,31 +136,24 @@
       },
 
       trigger: {
-        value: function value(events) {
+        value: function value(event) {
           var arglen = arguments.length - 1,
               args = new Array(arglen),
-              fns;
+              fns,
+              fn,
+              i;
 
-          for (var i = 0; i < arglen; i++) {
+          for (i = 0; i < arglen; i++) {
             args[i] = arguments[i + 1];
           }
 
-          onEachEvent(events, function (name, pos, ns) {
+          fns = slice.call(callbacks[event] || [], 0);
 
-            fns = slice.call(callbacks[name] || [], 0);
+          for (i = 0; fn = fns[i]; ++i) {
+            fn.apply(el, args);
+          }
 
-            for (var i = 0, fn; fn = fns[i]; ++i) {
-              if (fn.busy) continue;
-              fn.busy = 1;
-              if (!ns || fn.ns == ns) fn.apply(el, fn.typed ? [name].concat(args) : args);
-              if (fns[i] !== fn) {
-                i--;
-              }
-              fn.busy = 0;
-            }
-
-            if (callbacks['*'] && name != '*') el.trigger.apply(el, ['*', name].concat(args));
-          });
+          if (callbacks['*'] && event != '*') el.trigger.apply(el, ['*', event].concat(args));
 
           return el;
         },
@@ -295,9 +266,9 @@
     return Stage;
   }();
 
-  var HAS_TRANSLATE_3D = function (div) {
-    prefix(div.style, 'transform', 'translate3d(0, 0, 0)');
-    return (/translate3d/g.test(div.style.cssText)
+  var HAS_MATRIX = function (div) {
+    prefix(div.style, 'transform', 'matrix(1, 0, 0, 1, 0, 0)');
+    return (/matrix/g.test(div.style.cssText)
     );
   }(document.createElement('div'));
 
@@ -357,8 +328,8 @@
           nh += nh * this.opts.safeHeight;
         }
 
-        offsetTop = - ~ ~((nh - size.height) / 2);
-        offsetLeft = - ~ ~((nw - size.width) / 2);
+        offsetTop = -~~((nh - size.height) / 2);
+        offsetLeft = -~~((nw - size.width) / 2);
 
         this.img.width = nw;
         this.img.height = nh;
@@ -375,7 +346,7 @@
 
         perc *= this.img.height / size.height / 2 * this.opts.intensity;
 
-        if (HAS_TRANSLATE_3D) prefix(this.img.style, 'transform', 'translate3d(0, ' + -perc + '%, 0)');else prefix(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
+        if (HAS_MATRIX) prefix(this.img.style, 'transform', 'matrix(1,0,0,1, 0, ' + perc * this.opts.intensity / 2 + ')');else prefix(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
 
         return this;
       }
@@ -410,7 +381,7 @@
 
   var Parallax = function () {
     function Parallax(selector) {
-      var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       _classCallCheck(this, Parallax);
 

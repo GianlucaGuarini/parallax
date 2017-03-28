@@ -8,9 +8,9 @@ import o from 'riot-observable'
 /**
  * Check the translate3d feature
  */
-const HAS_TRANSLATE_3D = (function(div) {
-  prefix(div.style, 'transform', 'translate3d(0, 0, 0)')
-  return /translate3d/g.test(div.style.cssText)
+const HAS_MATRIX = (function(div) {
+  prefix(div.style, 'transform', 'matrix(1, 0, 0, 1, 0, 0)')
+  return /matrix/g.test(div.style.cssText)
 })(document.createElement('div'))
 
 export default class Canvas {
@@ -101,8 +101,8 @@ export default class Canvas {
     // and the current image height
     perc *= this.img.height / size.height / 2 * this.opts.intensity
 
-    if (HAS_TRANSLATE_3D)
-      prefix(this.img.style, 'transform', `translate3d(0, ${-perc}%, 0)`)
+    if (HAS_MATRIX)
+      prefix(this.img.style, 'transform', `matrix(1,0,0,1, 0, ${perc * this.opts.intensity / 2})`)
     else
       prefix(this.img.style, 'transform', `translate(0, ${-perc}%)`)
 
