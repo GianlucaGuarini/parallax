@@ -2,7 +2,7 @@ var utils = require('./_utils'),
   rollup = require( 'rollup' ),
   mkdirp = require('mkdirp'),
   fs = require('fs'),
-  npm = require('rollup-plugin-npm'),
+  npm = require('rollup-plugin-node-resolve'),
   commonjs = require('rollup-plugin-commonjs'),
   babel = require('babel-core')
 
@@ -56,8 +56,7 @@ module.exports = function(options) {
           fs.writeFileSync(`./dist/${ global.library }.js`, result, 'utf8')
           resolve()
         } catch (e) {
-          utils.print(e, 'error')
-          reject()
+          reject(e)
         }
 
       })

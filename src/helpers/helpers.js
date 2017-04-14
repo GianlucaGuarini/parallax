@@ -38,10 +38,10 @@ export function $(selector, ctx) {
  *
  */
 export function extend(src) {
-  var obj, args = arguments
-  for (var i = 1; i < args.length; ++i) {
+  let obj, args = arguments
+  for (let i = 1; i < args.length; ++i) {
     if (obj = args[i]) {
-      for (var key in obj) {
+      for (let key in obj) { // eslint-disable-line
         src[key] = obj[key]
       }
     }
@@ -84,25 +84,24 @@ export function elementData(el, attr) {
       return ret
     }, {})
 }
+
 /**
  * Prefix any fancy browser object property
  * @param   { Object } obj - object we want to update normally el.style
- * @param   { String } prop - the new object property we want to set
- * @param   { * } value - new value we want to assign to the prefixed property
- * @returns { Boolean } - return whether the feature is supported
+ * @param   { String } prop - the css property we want to prefix
+ * @returns { Boolean } - return the css property prefixed
  */
-export function prefix(obj, prop, value) {
-  var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
-    i = prefixes.length
+export function prefix(obj, prop) {
+  const prefixes = ['ms', 'o', 'Moz', 'webkit']
+  let i = prefixes.length
   while (i--) {
-    var prefix = prefixes[i],
+    const prefix = prefixes[i],
       // check if the prefix exists othewise we will use the unprefixed version
       // 4 ex using Transform: transform, webkitTransform, MozTransform, oTransform, msTransform
       p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1)
     if (p in obj) {
-      obj[p] = value
-      return true
+      return p
     }
   }
-  return false
+  return ''
 }

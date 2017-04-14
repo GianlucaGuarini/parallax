@@ -26,7 +26,6 @@ export default class Stage {
    * @returns { Object } - Stage
    */
   bind() {
-
     window.addEventListener('scroll',  () => this.scroll(), true)
     window.addEventListener('mousewheel', () => this.scroll(), true)
     window.addEventListener('touchmove', () => this.scroll(), true)
