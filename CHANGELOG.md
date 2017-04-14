@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.0.0
+  * updated: updated riot-observable using the latest version
+  * updated: use `transform: matrix()` for better performances
+  * fixed: [#5](https://github.com/GianlucaGuarini/parallax/issues/5)
+
 ### 1.1.0
   * fixed: https://github.com/GianlucaGuarini/parallax/issues/4 adding the `safeHeight` option
 

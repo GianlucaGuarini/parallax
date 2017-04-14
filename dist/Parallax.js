@@ -44,7 +44,7 @@
   }
 
   function extend(src) {
-    var obj,
+    var obj = void 0,
         args = arguments;
     for (var i = 1; i < args.length; ++i) {
       if (obj = args[i]) {
@@ -73,18 +73,17 @@
     }, {});
   }
 
-  function prefix(obj, prop, value) {
-    var prefixes = ['ms', 'o', 'Moz', 'webkit', ''],
-        i = prefixes.length;
+  function prefix(obj, prop) {
+    var prefixes = ['ms', 'o', 'Moz', 'webkit'];
+    var i = prefixes.length;
     while (i--) {
-      var prefix = prefixes[i],
-          p = prefix ? prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1);
+      var _prefix = prefixes[i],
+          p = _prefix ? _prefix + prop[0].toUpperCase() + prop.substr(1) : prop.toLowerCase() + prop.substr(1);
       if (p in obj) {
-        obj[p] = value;
-        return true;
+        return p;
       }
     }
-    return false;
+    return '';
   }
 
   var observable = function observable(el) {
@@ -266,8 +265,11 @@
     return Stage;
   }();
 
+  var TRANSFORM_PREFIX = function (div) {
+    return prefix(div.style, 'transform');
+  }(document.createElement('div'));
   var HAS_MATRIX = function (div) {
-    prefix(div.style, 'transform', 'matrix(1, 0, 0, 1, 0, 0)');
+    div.style[TRANSFORM_PREFIX] = 'matrix(1, 0, 0, 1, 0, 0)';
     return (/matrix/g.test(div.style.cssText)
     );
   }(document.createElement('div'));
@@ -305,15 +307,15 @@
     }, {
       key: 'update',
       value: function update() {
-
         var iw = this.img.naturalWidth || this.img.width,
             ih = this.img.naturalHeight || this.img.height,
             ratio = iw / ih,
-            size = this.size,
-            nh,
-            nw,
-            offsetTop,
-            offsetLeft;
+            size = this.size;
+
+        var nh = void 0,
+            nw = void 0,
+            offsetTop = void 0,
+            offsetLeft = void 0;
 
         if (size.width / ratio <= size.height) {
           nw = size.height * ratio;
@@ -340,13 +342,16 @@
       }
     }, {
       key: 'draw',
-      value: function draw(stage) {
+      value: function draw(_ref) {
+        var scrollTop = _ref.scrollTop,
+            width = _ref.width,
+            height = _ref.height;
+
         var size = this.size,
-            perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1;
+            perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
+            offset = ~~(perc * (this.img.height / size.height / 2 * this.opts.intensity) * 10);
 
-        perc *= this.img.height / size.height / 2 * this.opts.intensity;
-
-        if (HAS_MATRIX) prefix(this.img.style, 'transform', 'matrix(1,0,0,1, 0, ' + perc * this.opts.intensity / 2 + ')');else prefix(this.img.style, 'transform', 'translate(0, ' + -perc + '%)');
+        this.img.style[TRANSFORM_PREFIX] = HAS_MATRIX ? 'matrix(1,0,0,1, 0, ' + -offset + ')' : 'translate(0, ' + -offset + 'px)';
 
         return this;
       }
@@ -377,7 +382,7 @@
     return Canvas;
   }();
 
-  var stage;
+  var stage = void 0;
 
   var Parallax = function () {
     function Parallax(selector) {
@@ -460,24 +465,26 @@
     }, {
       key: 'scroll',
       value: function scroll(scrollTop) {
-        var i = this.canvases.length,
-            offsetYBounds = this.opts.offsetYBounds,
-            stageScrollTop = stage.scrollTop;
+        var offsetYBounds = this.opts.offsetYBounds,
+            _stage = stage,
+            height = _stage.height,
+            width = _stage.width;
+
+
+        var i = this.canvases.length;
 
         while (i--) {
-
           var canvas = this.canvases[i],
               canvasHeight = canvas.size.height,
-              canvasOffset = canvas.offset,
-              canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop;
+              canvasOffset = canvas.offset;
 
-          if (canvas.isLoaded && canvasScrollDelta + offsetYBounds > 0 && canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height) {
-            canvas.draw(stage);
+          if (canvas.isLoaded && scrollTop + stage.height + offsetYBounds > canvasOffset.top && canvasOffset.top + canvasHeight > scrollTop - offsetYBounds) {
+            canvas.draw({ height: height, scrollTop: scrollTop, width: width });
             this.trigger('draw', canvas.img);
           }
         }
 
-        this.trigger('update', stageScrollTop);
+        this.trigger('update', scrollTop);
 
         return this;
       }

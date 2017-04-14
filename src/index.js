@@ -8,11 +8,12 @@ import o from 'riot-observable'
  * with this class we listen them once and we subscribe/unsubscribe all the Parallax instances to the main events dispatcher
  * @type {Stage}
  */
-var stage
+let stage
 
 /**
- * @class
- * An awesome script
+ * Parallax class
+ * @param { String } selector - the tag selector where we will bind the parallax
+ * @param { Object } opts - parallax options
  */
 class Parallax {
   constructor(selector, opts = {}) {
@@ -30,6 +31,7 @@ class Parallax {
 
     return this
   }
+
   /**
    * Initialize the parallax
    * @returns { Object } - Parallax
@@ -45,6 +47,7 @@ class Parallax {
 
     return this
   }
+
   /**
    * Bind the instance events setting all the callbacks
    * @returns { Object } - Parallax
@@ -66,6 +69,7 @@ class Parallax {
 
     return this
   }
+
   /**
    * Force manually a redraw
    * @returns { Object } - Parallax
@@ -74,6 +78,7 @@ class Parallax {
     this.onResize(stage.size).onScroll(stage.scrollTop)
     return this
   }
+
   /**
    * Callback triggered once a canvas has loaded its image
    * @param   { Object } canvas - canvas instance
@@ -86,38 +91,39 @@ class Parallax {
     if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded')
     return this
   }
+
   /**
    * Callback triggered on scroll
    * @param   { Number } scrollTop - page offset top
    * @returns { Object } - Parallax
    */
   scroll(scrollTop) {
-    var i = this.canvases.length,
-      offsetYBounds = this.opts.offsetYBounds,
-      stageScrollTop = stage.scrollTop
+    const offsetYBounds = this.opts.offsetYBounds,
+      { height, width } = stage
+
+    let i = this.canvases.length
 
     while (i--) {
-
       let canvas = this.canvases[i],
         canvasHeight = canvas.size.height,
-        canvasOffset = canvas.offset,
-        canvasScrollDelta = canvasOffset.top + canvasHeight - stageScrollTop
+        canvasOffset = canvas.offset
 
       if (
         canvas.isLoaded &&
-        canvasScrollDelta + offsetYBounds > 0 &&
-        canvasScrollDelta - offsetYBounds < stageScrollTop + stage.height
+        scrollTop + stage.height + offsetYBounds > canvasOffset.top &&
+        canvasOffset.top + canvasHeight > scrollTop - offsetYBounds
       ) {
-        canvas.draw(stage)
+        canvas.draw({ height, scrollTop, width })
         this.trigger('draw', canvas.img)
       }
 
     }
 
-    this.trigger('update', stageScrollTop)
+    this.trigger('update', scrollTop)
 
     return this
   }
+
   /**
    * Add parallax elements to this parallax instance
    * @param { String|Array } els - DOM selector or node list
@@ -127,6 +133,7 @@ class Parallax {
     this.canvases = this.canvases.concat(this.createCanvases($$(els)))
     return this
   }
+
   /**
    * Remove parallax elements from this parallax instance
    * @param { String|Array } els - DOM selector or node list
@@ -134,7 +141,7 @@ class Parallax {
    */
   remove(els) {
     $$(els).forEach((el) => {
-      var i = this.canvases.length
+      let i = this.canvases.length
       while (i--) {
         if (el == this.canvases[i].img) {
           this.canvases.splice(i, 1)
@@ -144,6 +151,7 @@ class Parallax {
     })
     return this
   }
+
   /**
    * Kill all the internal and external callbacks listening this instance events
    * @returns { Object } - Parallax
@@ -154,21 +162,23 @@ class Parallax {
     stage.off('resize', this._onResize).off('scroll', this._onScroll)
     return this
   }
+
   /**
    * Callback triggered on window resize
    * @param   { Object } size - object containing the window width and height
    * @returns { Object } - Parallax
    */
   resize(size) {
-    var i = this.canvases.length
+    let i = this.canvases.length
     while (i--) {
-      var canvas = this.canvases[i]
+      const canvas = this.canvases[i]
       if (!canvas.isLoaded) return
       canvas.update().draw(stage)
     }
     this.trigger('resize')
     return this
   }
+
   /**
    * Set the canvases instances
    * @param   { Array } els - list of the images we want to parallax
@@ -176,7 +186,7 @@ class Parallax {
    */
   createCanvases(els) {
     return els.map(el => {
-      var data = elementData(el)
+      const data = elementData(el)
       return new Canvas(el, {
         intensity: !isUndefined(data.intensity) ? +data.intensity : this.opts.intensity,
         center: !isUndefined(data.center) ? +data.center : this.opts.center,
@@ -184,6 +194,7 @@ class Parallax {
       })
     })
   }
+
   /**
    * The options will be always set extending the script _defaults
    * @param   { Object } opts - custom options
@@ -199,6 +210,7 @@ class Parallax {
     }
     extend(this._defaults, opts)
   }
+
   /**
    * Get the script options object
    * @returns { Object } - current options
