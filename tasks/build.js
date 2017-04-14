@@ -2,7 +2,7 @@ var utils = require('./_utils'),
   rollup = require( 'rollup' ),
   mkdirp = require('mkdirp'),
   fs = require('fs'),
-  npm = require('rollup-plugin-npm'),
+  npm = require('rollup-plugin-node-resolve'),
   commonjs = require('rollup-plugin-commonjs'),
   babel = require('babel-core')
 

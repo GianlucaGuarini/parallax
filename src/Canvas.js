@@ -8,9 +8,12 @@ import o from 'riot-observable'
 /**
  * Check the translate3d feature
  */
-const HAS_TRANSLATE_3D = (function(div) {
-  prefix(div.style, 'transform', 'translate3d(0, 0, 0)')
-  return /translate3d/g.test(div.style.cssText)
+const TRANSFORM_PREFIX = (function(div) {
+  return prefix(div.style, 'transform')
+})(document.createElement('div'))
+const HAS_MATRIX = (function(div) {
+  div.style[TRANSFORM_PREFIX] = 'matrix(1, 0, 0, 1, 0, 0)'
+  return /matrix/g.test(div.style.cssText)
 })(document.createElement('div'))
 
 export default class Canvas {
@@ -27,7 +30,6 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   load() {
-
     if (!this.img.width || !this.img.height || !this.img.complete)
       this.img.onload = () => this.onImageLoaded()
     else this.onImageLoaded()
@@ -49,15 +51,12 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   update() {
-
-    var iw = this.img.naturalWidth || this.img.width,
+    const iw = this.img.naturalWidth || this.img.width,
       ih = this.img.naturalHeight || this.img.height,
       ratio = iw / ih,
-      size = this.size,
-      nh,
-      nw,
-      offsetTop,
-      offsetLeft
+      size = this.size
+
+    let nh, nw, offsetTop, offsetLeft
 
     // calculate the new width and the height
     // keeping the image ratio
@@ -90,21 +89,18 @@ export default class Canvas {
    * Draw the image on the canvas
    * @returns { Object } - Canvas
    */
-  draw(stage) {
-    var size = this.size,
+  draw({ scrollTop, width, height }) {
+    const size = this.size,
       // this value will be:
       //  < 0 when the image is on the top
       //  0 when the image is in the center of the screen
       //  > 0 when the image is at the bottom
-      perc = (this.offset.top + size.height * this.opts.center + stage.height / 2 - stage.scrollTop) / stage.height - 1
-    // increase the percentage effect according to the intensity
-    // and the current image height
-    perc *= this.img.height / size.height / 2 * this.opts.intensity
+      perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
+      // increase the percentage effect according to the intensity
+      // and the current image height
+      offset = ~~(perc * (this.img.height / size.height / 2 * this.opts.intensity) * 10)
 
-    if (HAS_TRANSLATE_3D)
-      prefix(this.img.style, 'transform', `translate3d(0, ${-perc}%, 0)`)
-    else
-      prefix(this.img.style, 'transform', `translate(0, ${-perc}%)`)
+    this.img.style[TRANSFORM_PREFIX] = HAS_MATRIX ? `matrix(1,0,0,1, 0, ${-offset})` : `translate(0, ${-offset}px)`
 
     return this
   }
@@ -131,7 +127,7 @@ export default class Canvas {
    * @returns { Object } - the height and the width of the image parent tag
    */
   get size() {
-    var props = this.bounds
+    const props = this.bounds
     return {
       height: props.height | 0,
       width: props.width | 0
