@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.0.2
+  * fixed: missing minified version of the script
+
 ### 2.0.1
   * added: the `will-change` attribute hoping to gain better performances
 
