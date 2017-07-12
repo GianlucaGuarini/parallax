@@ -1,5 +1,11 @@
 ## Changelog
 
+### 2.0.2
+  * fixed: missing minified version of the script
+
+### 2.0.1
+  * added: the `will-change` attribute hoping to gain better performances
+
 ### 2.0.0
   * updated: updated riot-observable using the latest version
   * updated: use `transform: matrix()` for better performances
