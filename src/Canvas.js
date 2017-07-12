@@ -43,6 +43,7 @@ export default class Canvas {
   onImageLoaded() {
     this.isLoaded = true
     this.update()
+    this.img.style.willChange = 'transform'
     this.trigger('loaded', this.img)
     return this
   }
