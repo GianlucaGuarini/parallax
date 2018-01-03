@@ -63,7 +63,7 @@ export function isUndefined(val) {
  * @returns { String } my-string -> myString
  */
 export function toCamel(string) {
-  return string.replace(/-(\w)/g, function(_, c) {
+  return string.replace(/-(\w)/g, function (_, c) {
     return c.toUpperCase()
   })
 }

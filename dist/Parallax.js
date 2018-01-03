@@ -386,7 +386,8 @@
   var stage = void 0;
 
   var Parallax = function () {
-    function Parallax(selector) {
+    function Parallax() {
+      var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       _classCallCheck(this, Parallax);
@@ -396,7 +397,10 @@
       this.opts = opts;
       this.selector = selector;
       this.canvases = [];
-      this.add(selector);
+
+      if (selector !== null) {
+        this.add(selector);
+      }
 
       if (!stage) stage = new Stage();
 
@@ -407,7 +411,7 @@
       key: 'init',
       value: function init() {
 
-        if (!this.canvases.length) {
+        if (!this.canvases.length && this.selector !== null) {
           console.warn('No images were found with the selector "' + this.selector + '"');
         } else {
           this.imagesLoaded = 0;

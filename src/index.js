@@ -16,7 +16,7 @@ let stage
  * @param { Object } opts - parallax options
  */
 class Parallax {
-  constructor(selector, opts = {}) {
+  constructor(selector = null, opts = {}) {
 
     // make this object observable
     o(this)
@@ -24,7 +24,12 @@ class Parallax {
     this.opts = opts
     this.selector = selector
     this.canvases = []
-    this.add(selector)
+
+    // allow to initialize without adding any dom elements
+    if (selector !== null) {
+      this.add(selector)
+    }
+
     // lazy stage instance initialization
     if (!stage)
       stage = new Stage()
@@ -38,7 +43,7 @@ class Parallax {
    */
   init() {
 
-    if (!this.canvases.length) {
+    if (!this.canvases.length && this.selector !== null) {
       console.warn(`No images were found with the selector "${this.selector}"`)
     } else {
       this.imagesLoaded = 0
@@ -86,7 +91,7 @@ class Parallax {
    */
   onCanvasLoaded(canvas) {
     this.trigger('image:loaded', canvas.img, canvas)
-    this.imagesLoaded ++
+    this.imagesLoaded++
     canvas.draw(stage)
     if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded')
     return this
@@ -199,7 +204,7 @@ class Parallax {
    * The options will be always set extending the script _defaults
    * @param   { Object } opts - custom options
    */
-  set opts (opts) {
+  set opts(opts) {
     this._defaults = {
       offsetYBounds: 50,
       intensity: 30,

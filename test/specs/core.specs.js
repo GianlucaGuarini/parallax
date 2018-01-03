@@ -1,5 +1,5 @@
 /* global Parallax */
-describe('Core', function() {
+describe('Core', function () {
 
   this.timeout(5000)
 
@@ -31,7 +31,7 @@ describe('Core', function() {
 
   beforeEach(() => {
     var i = 2
-    while (i --) {
+    while (i--) {
       addImage()
     }
   })
@@ -53,6 +53,18 @@ describe('Core', function() {
     expect(p.canvases).to.have.length(2)
   })
 
+  it('It can be initialized without nodes', () => {
+    p = new Parallax(null).init()
+    expect(p.canvases).to.have.length(0)
+  })
+
+  it('It can have images added after null node initialization', () => {
+    p = new Parallax(null).init()
+    expect(p.canvases).to.have.length(0)
+    p.add('.parallax')
+    expect(p.canvases).to.have.length(2)
+  })
+
   it('The "image:loaded", "images:loaded", "draw","resize" events get called', (done) => {
     var imagesLoaded = sinon.spy(),
       resize = sinon.spy(),
@@ -66,8 +78,8 @@ describe('Core', function() {
 
     p.on('images:loaded', () => {
 
-      p.resize({width: 300, height: 300})
-      p.resize({width: 500, height: 500})
+      p.resize({ width: 300, height: 300 })
+      p.resize({ width: 500, height: 500 })
       p.scroll(300)
       expect(imagesLoaded).to.have.callCount(2)
       expect(draw).to.have.callCount(1)
