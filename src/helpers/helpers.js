@@ -10,11 +10,16 @@
  * @returns { Object } dom nodes found
  */
 export function $$(selector, ctx) {
-  var els
-  if (typeof selector == 'string')
+  let els
+
+  if (typeof selector == 'string') {
     els = (ctx || document).querySelectorAll(selector)
-  else
+  } else if (!Array.isArray(selector)) {
+    els = [selector]
+  } else {
     els = selector
+  }
+
   return Array.prototype.slice.call(els)
 }
 

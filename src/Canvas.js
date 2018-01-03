@@ -8,10 +8,10 @@ import o from 'riot-observable'
 /**
  * Check the translate3d feature
  */
-const TRANSFORM_PREFIX = (function(div) {
+const TRANSFORM_PREFIX = (function (div) {
   return prefix(div.style, 'transform')
 })(document.createElement('div'))
-const HAS_MATRIX = (function(div) {
+const HAS_MATRIX = (function (div) {
   div.style[TRANSFORM_PREFIX] = 'matrix(1, 0, 0, 1, 0, 0)'
   return /matrix/g.test(div.style.cssText)
 })(document.createElement('div'))
@@ -24,18 +24,30 @@ export default class Canvas {
     this.img = img
     this.wrapper = img.parentNode
     this.isLoaded = false
+
+    // store the initial image properties - deep clone
+    this.initial = img.cloneNode(true)
   }
   /**
    * Load the image
    * @returns { Object } - Canvas
    */
   load() {
-    if (!this.img.width || !this.img.height || !this.img.complete)
+
+    if (!this.img.width || !this.img.height || !this.img.complete) {
       this.img.onload = () => this.onImageLoaded()
-    else this.onImageLoaded()
+    } else {
+      this.onImageLoaded()
+    }
 
     return this
   }
+
+  destroy() {
+    this.img.parentNode.replaceChild(this.initial, this.img)
+    this.off('*')
+  }
+
   /**
    * Callback triggered when the image gets loaded
    * @returns { Object } - Canvas

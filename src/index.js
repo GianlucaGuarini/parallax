@@ -24,6 +24,7 @@ class Parallax {
     this.opts = opts
     this.selector = selector
     this.canvases = []
+    this.bound = false
 
     // allow to initialize without adding any dom elements
     if (selector !== null) {
@@ -42,6 +43,10 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   init() {
+
+    if (this.bound) {
+      throw 'The parallax instance has already been initialized'
+    }
 
     if (!this.canvases.length && this.selector !== null) {
       console.warn(`No images were found with the selector "${this.selector}"`)
@@ -71,6 +76,8 @@ class Parallax {
       canvas.one('loaded', () => this.onCanvasLoaded(canvas))
       canvas.load()
     })
+
+    this.bound = true
 
     return this
   }
@@ -135,7 +142,17 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   add(els) {
-    this.canvases = this.canvases.concat(this.createCanvases($$(els)))
+    const canvases = this.createCanvases($$(els))
+
+    if (this.bound) {
+      canvases.forEach((canvas) => {
+        canvas.one('loaded', () => this.onCanvasLoaded(canvas))
+        canvas.load()
+      })
+    }
+
+    this.canvases = this.canvases.concat(canvases)
+
     return this
   }
 
@@ -149,6 +166,7 @@ class Parallax {
       let i = this.canvases.length
       while (i--) {
         if (el == this.canvases[i].img) {
+          this.canvases[i].destroy()
           this.canvases.splice(i, 1)
           break
         }
