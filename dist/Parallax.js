@@ -38,8 +38,14 @@
   }();
 
   function $$(selector, ctx) {
-    var els;
-    if (typeof selector == 'string') els = (ctx || document).querySelectorAll(selector);else els = selector;
+    var els = void 0;
+
+    if (typeof selector == 'string') {
+      els = (ctx || document).querySelectorAll(selector);
+    } else {
+      els = selector;
+    }
+
     return Array.prototype.slice.call(els);
   }
 
@@ -283,6 +289,8 @@
       this.img = img;
       this.wrapper = img.parentNode;
       this.isLoaded = false;
+
+      this.initial = img.cloneNode(true);
     }
 
     _createClass(Canvas, [{
@@ -290,11 +298,21 @@
       value: function load() {
         var _this4 = this;
 
-        if (!this.img.width || !this.img.height || !this.img.complete) this.img.onload = function () {
-          return _this4.onImageLoaded();
-        };else this.onImageLoaded();
+        if (!this.img.width || !this.img.height || !this.img.complete) {
+          this.img.onload = function () {
+            return _this4.onImageLoaded();
+          };
+        } else {
+          this.onImageLoaded();
+        }
 
         return this;
+      }
+    }, {
+      key: 'destroy',
+      value: function destroy() {
+        this.img.parentNode.replaceChild(this.initial, this.img);
+        this.off('*');
       }
     }, {
       key: 'onImageLoaded',
@@ -386,7 +404,8 @@
   var stage = void 0;
 
   var Parallax = function () {
-    function Parallax(selector) {
+    function Parallax() {
+      var selector = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
       var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       _classCallCheck(this, Parallax);
@@ -396,7 +415,11 @@
       this.opts = opts;
       this.selector = selector;
       this.canvases = [];
-      this.add(selector);
+      this.bound = false;
+
+      if (selector !== null) {
+        this.add(selector);
+      }
 
       if (!stage) stage = new Stage();
 
@@ -407,7 +430,11 @@
       key: 'init',
       value: function init() {
 
-        if (!this.canvases.length) {
+        if (this.bound) {
+          throw 'The parallax instance has already been initialized';
+        }
+
+        if (!this.canvases.length && this.selector !== null) {
           console.warn('No images were found with the selector "' + this.selector + '"');
         } else {
           this.imagesLoaded = 0;
@@ -445,6 +472,8 @@
           });
           canvas.load();
         });
+
+        this.bound = true;
 
         return this;
       }
@@ -492,19 +521,34 @@
     }, {
       key: 'add',
       value: function add(els) {
-        this.canvases = this.canvases.concat(this.createCanvases($$(els)));
+        var _this6 = this;
+
+        var canvases = this.createCanvases($$(els));
+
+        if (this.bound) {
+          canvases.forEach(function (canvas) {
+            canvas.one('loaded', function () {
+              return _this6.onCanvasLoaded(canvas);
+            });
+            canvas.load();
+          });
+        }
+
+        this.canvases = this.canvases.concat(canvases);
+
         return this;
       }
     }, {
       key: 'remove',
       value: function remove(els) {
-        var _this6 = this;
+        var _this7 = this;
 
         $$(els).forEach(function (el) {
-          var i = _this6.canvases.length;
+          var i = _this7.canvases.length;
           while (i--) {
-            if (el == _this6.canvases[i].img) {
-              _this6.canvases.splice(i, 1);
+            if (el == _this7.canvases[i].img) {
+              _this7.canvases[i].destroy();
+              _this7.canvases.splice(i, 1);
               break;
             }
           }
@@ -534,14 +578,14 @@
     }, {
       key: 'createCanvases',
       value: function createCanvases(els) {
-        var _this7 = this;
+        var _this8 = this;
 
         return els.map(function (el) {
           var data = elementData(el);
           return new Canvas(el, {
-            intensity: !isUndefined(data.intensity) ? +data.intensity : _this7.opts.intensity,
-            center: !isUndefined(data.center) ? +data.center : _this7.opts.center,
-            safeHeight: !isUndefined(data.safeHeight) ? +data.safeHeight : _this7.opts.safeHeight
+            intensity: !isUndefined(data.intensity) ? +data.intensity : _this8.opts.intensity,
+            center: !isUndefined(data.center) ? +data.center : _this8.opts.center,
+            safeHeight: !isUndefined(data.safeHeight) ? +data.safeHeight : _this8.opts.safeHeight
           });
         });
       }

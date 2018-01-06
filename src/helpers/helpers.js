@@ -14,8 +14,6 @@ export function $$(selector, ctx) {
 
   if (typeof selector == 'string') {
     els = (ctx || document).querySelectorAll(selector)
-  } else if (!Array.isArray(selector)) {
-    els = [selector]
   } else {
     els = selector
   }
