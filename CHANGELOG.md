@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.1.0
+  * added: the possibility to instantiate the `Parallax` class with out DOM selectors
+  * updated: improved the destroy method restoring the initial DOM elements state
+  * fixed: https://github.com/GianlucaGuarini/parallax/issues/7 thanks to https://github.com/GianlucaGuarini/parallax/pulls/14
+
 ### 2.0.2
   * fixed: missing minified version of the script
 
@@ -15,7 +20,7 @@
   * fixed: https://github.com/GianlucaGuarini/parallax/issues/4 adding the `safeHeight` option
 
 ### 1.0.4
-  * updated: riot-observable dependecy to get faster performances (30% faster)
+  * updated: riot-observable dependency to get faster performances (30% faster)
 
 ### 1.0.3
   * fixed: destroy method
