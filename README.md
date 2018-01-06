@@ -197,6 +197,6 @@ $ ./make watch # or also `$ npm run watch`
 [coverage-image]:https://img.shields.io/coveralls/GianlucaGuarini/parallax/master.svg?style=flat-square
 [coverage-url]:https://coveralls.io/r/GianlucaGuarini/parallax?branch=master
 
-[codeclimate-image]:https://img.shields.io/codeclimate/github/GianlucaGuarini/parallax.svg?style=flat-square
+[codeclimate-image]:https://api.codeclimate.com/v1/badges/05d33fcf100bac2cb67f/maintainability
 [codeclimate-url]:https://codeclimate.com/github/GianlucaGuarini/parallax
 

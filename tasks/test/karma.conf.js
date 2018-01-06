@@ -26,7 +26,6 @@ module.exports = function(config) {
         served: true,
         included: false
       },
-      'node_modules/mocha/mocha.js',
       'node_modules/chai/chai.js',
       'node_modules/sinon/pkg/sinon.js',
       'node_modules/sinon-chai/lib/sinon-chai.js',
