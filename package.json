@@ -1,6 +1,6 @@
 {
   "name": "scroll-parallax",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "index.js",
   "jsnext:main": "src/index.js",
