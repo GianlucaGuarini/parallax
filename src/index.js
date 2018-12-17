@@ -43,6 +43,7 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   init() {
+    console.log('initial change');
 
     if (this.bound) {
       throw 'The parallax instance has already been initialized'
