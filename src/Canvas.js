@@ -33,9 +33,14 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   load() {
+    const isImage = this.img.complete !== undefined;
 
     if (!this.img.width || !this.img.height || !this.img.complete) {
-      this.img.onload = () => this.onImageLoaded()
+      if (isImage) {
+        this.img.onload = () => this.onImageLoaded()
+      } else {
+        this.onImageLoaded();
+      }
     } else {
       this.onImageLoaded()
     }
@@ -64,8 +69,8 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   update() {
-    const iw = this.img.naturalWidth || this.img.width,
-      ih = this.img.naturalHeight || this.img.height,
+    const iw = this.img.naturalWidth || this.img.width || this.offsetWidth,
+        ih = this.img.naturalHeight || this.img.height || this.offsetHeight,
       ratio = iw / ih,
       size = this.size
 
