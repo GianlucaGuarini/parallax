@@ -50,7 +50,7 @@ class Parallax {
     }
 
     if (!this.canvases.length && this.selector !== null) {
-      console.warn(`No images were found with the selector "${this.selector}"`)
+      console.warn(`-- No images were found with the selector "${this.selector}"`)
     } else {
       this.imagesLoaded = 0
       this.bind()
