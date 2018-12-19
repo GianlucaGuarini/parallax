@@ -37,7 +37,7 @@ export default class Canvas {
     const isImageReady = isImage && this.element.width && this.element.height && this.element.complete
 
     if (isImage && !isImageReady) {
-      this.element.onload = () => this.onImageLoaded();
+      this.element.onload = () => this.onImageLoaded()
     } else {
       this.onImageLoaded()
     }
