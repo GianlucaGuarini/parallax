@@ -66,8 +66,8 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   update() {
-    const iw = this.element.naturalWidth || this.element.width || this.offsetWidth,
-        ih = this.element.naturalHeight || this.element.height || this.offsetHeight,
+    const iw = this.element.naturalWidth || this.element.width || this.element.offsetWidth,
+        ih = this.element.naturalHeight || this.element.height || this.element.offsetHeight,
       ratio = iw / ih,
       size = this.size
 
