@@ -96,7 +96,7 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   onCanvasLoaded(canvas) {
-    this.trigger('image:loaded', canvas.img, canvas)
+    this.trigger('image:loaded', canvas.element, canvas)
     this.imagesLoaded++
     canvas.draw(stage)
     if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded')
@@ -125,7 +125,7 @@ class Parallax {
         canvasOffset.top + canvasHeight > scrollTop - offsetYBounds
       ) {
         canvas.draw({ height, scrollTop, width })
-        this.trigger('draw', canvas.img)
+        this.trigger('draw', canvas.element)
       }
 
     }
@@ -164,7 +164,7 @@ class Parallax {
     $$(els).forEach((el) => {
       let i = this.canvases.length
       while (i--) {
-        if (el == this.canvases[i].img) {
+        if (el == this.canvases[i].element) {
           this.canvases[i].destroy()
           this.canvases.splice(i, 1)
           break
