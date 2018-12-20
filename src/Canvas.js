@@ -25,11 +25,11 @@ export default class Canvas {
     this.wrapper = element.parentNode
     this.isLoaded = false
 
-    // store the initial image properties - deep clone
+    // store the initial element properties - deep clone
     this.initial = element.cloneNode(true)
   }
   /**
-   * Load the image
+   * Load the element
    * @returns { Object } - Canvas
    */
   load() {
@@ -37,9 +37,9 @@ export default class Canvas {
     const isImageReady = isImage && this.element.width && this.element.height && this.element.complete
 
     if (isImage && !isImageReady) {
-      this.element.onload = () => this.onImageLoaded()
+      this.element.onload = () => this.onElementLoaded()
     } else {
-      this.onImageLoaded()
+      this.onElementLoaded()
     }
 
     return this
@@ -51,10 +51,10 @@ export default class Canvas {
   }
 
   /**
-   * Callback triggered when the image gets loaded
+   * Callback triggered when the element gets loaded
    * @returns { Object } - Canvas
    */
-  onImageLoaded() {
+  onElementLoaded() {
     this.isLoaded = true
     this.update()
     this.element.style.willChange = 'transform'
@@ -62,19 +62,19 @@ export default class Canvas {
     return this
   }
   /**
-   * Center the image in its wrapper
+   * Center the element in its wrapper
    * @returns { Object } - Canvas
    */
   update() {
     const iw = this.element.naturalWidth || this.element.width || this.element.offsetWidth,
-      ih = this.element.naturalHeight || this.element.height || this.element.offsetHeight,
-      ratio = iw / ih,
-      size = this.size
+        ih = this.element.naturalHeight || this.element.height || this.element.offsetHeight,
+        ratio = iw / ih,
+        size = this.size
 
     let nh, nw, offsetTop, offsetLeft
 
     // calculate the new width and the height
-    // keeping the image ratio
+    // keeping the element ratio
     if (size.width / ratio <= size.height) {
       nw = size.height * ratio
       nh = size.height
@@ -83,7 +83,7 @@ export default class Canvas {
       nh = size.width / ratio
     }
 
-    // zoom the image if necessary
+    // zoom the element if necessary
     if (nh <= size.height + size.height * this.opts.safeHeight) {
       nw += nw * this.opts.safeHeight
       nh += nh * this.opts.safeHeight
@@ -101,19 +101,19 @@ export default class Canvas {
     return this
   }
   /**
-   * Draw the image on the canvas
+   * Draw the element on the canvas
    * @returns { Object } - Canvas
    */
   draw({ scrollTop, width, height }) {
     const size = this.size,
-      // this value will be:
-      //  < 0 when the image is on the top
-      //  0 when the image is in the center of the screen
-      //  > 0 when the image is at the bottom
-      perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
-      // increase the percentage effect according to the intensity
-      // and the current image height
-      offset = ~~(perc * (this.element.height / size.height / 2 * this.opts.intensity) * 10)
+        // this value will be:
+        //  < 0 when the element is on the top
+        //  0 when the element is in the center of the screen
+        //  > 0 when the element is at the bottom
+        perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
+        // increase the percentage effect according to the intensity
+        // and the current element height
+        offset = ~~(perc * (this.element.height / size.height / 2 * this.opts.intensity) * 10)
 
     this.element.style[TRANSFORM_PREFIX] = HAS_MATRIX ? `matrix(1,0,0,1, 0, ${-offset})` : `translate(0, ${-offset}px)`
 
@@ -129,7 +129,7 @@ export default class Canvas {
   }
   /**
    * Get the parent wrapper offset
-   * @returns { Object } - top and left position of the image parent tag
+   * @returns { Object } - top and left position of the element parent tag
    */
   get offset() {
     return {
@@ -139,7 +139,7 @@ export default class Canvas {
   }
   /**
    * Get the parent wrapper size
-   * @returns { Object } - the height and the width of the image parent tag
+   * @returns { Object } - the height and the width of the element parent tag
    */
   get size() {
     const props = this.bounds

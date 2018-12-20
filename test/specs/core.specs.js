@@ -6,24 +6,24 @@ describe('Core', function () {
   const PLACEHOLDER_IMAGE_URL = 'base/demo/img1.jpg'
 
   var container = document.createElement('div'),
-    addImage = () => {
-      var img = new Image(),
-        figure = document.createElement('figure')
+      addImage = () => {
+        var img = new Image(),
+            figure = document.createElement('figure')
 
-      img.src = `${PLACEHOLDER_IMAGE_URL}?${Math.random()}`
-      img.className = 'parallax'
-      figure.appendChild(img)
-      figure.style.top = `${Math.random() * 100}px`
-      figure.style.left = '0'
-      figure.style.position = 'relative'
-      figure.style.overflow = 'hidden'
-      figure.style.display = 'block'
-      figure.style.width = `${Math.random() * 20}%`
-      figure.style.margin = '0'
-      figure.style.height = '400px'
-      container.appendChild(figure)
-    },
-    p
+        img.src = `${PLACEHOLDER_IMAGE_URL}?${Math.random()}`
+        img.className = 'parallax'
+        figure.appendChild(img)
+        figure.style.top = `${Math.random() * 100}px`
+        figure.style.left = '0'
+        figure.style.position = 'relative'
+        figure.style.overflow = 'hidden'
+        figure.style.display = 'block'
+        figure.style.width = `${Math.random() * 20}%`
+        figure.style.margin = '0'
+        figure.style.height = '400px'
+        container.appendChild(figure)
+      },
+      p
 
   before(() => {
     document.body.appendChild(container)
@@ -65,18 +65,18 @@ describe('Core', function () {
     expect(p.canvases).to.have.length(2)
   })
 
-  it('The "image:loaded", "images:loaded", "draw","resize" events get called', (done) => {
+  it('The "element:loaded", "elements:loaded", "draw","resize" events get called', (done) => {
     var imagesLoaded = sinon.spy(),
-      resize = sinon.spy(),
-      draw = sinon.spy()
+        resize = sinon.spy(),
+        draw = sinon.spy()
 
     p = new Parallax('.parallax')
 
-    p.on('image:loaded', imagesLoaded)
+    p.on('element:loaded', imagesLoaded)
     p.one('draw', draw)
     p.one('resize', resize)
 
-    p.on('images:loaded', () => {
+    p.on('elements:loaded', () => {
 
       p.resize({ width: 300, height: 300 })
       p.resize({ width: 500, height: 500 })
