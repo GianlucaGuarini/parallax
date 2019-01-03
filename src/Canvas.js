@@ -34,10 +34,12 @@ export default class Canvas {
    */
   load() {
     const isImage = this.element.complete !== undefined
-    const isImageReady = isImage && this.element.width && this.element.height && this.element.complete
+    const isVideo = this.element.oncanplay !== undefined
 
-    if (isImage && !isImageReady) {
-      this.element.onload = () => this.onElementLoaded()
+    if (isImage) {
+      this.element.onload = this.element.complete = () => this.onElementLoaded()
+    } else if (isVideo) {
+      this.element.onload = this.element.oncanplay = () => this.onElementLoaded()
     } else {
       this.onElementLoaded()
     }
