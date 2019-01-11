@@ -281,16 +281,16 @@
   }(document.createElement('div'));
 
   var Canvas = function () {
-    function Canvas(img, opts) {
+    function Canvas(element, opts) {
       _classCallCheck(this, Canvas);
 
       observable(this);
       this.opts = opts;
-      this.img = img;
-      this.wrapper = img.parentNode;
+      this.element = element;
+      this.wrapper = element.parentNode;
       this.isLoaded = false;
 
-      this.initial = img.cloneNode(true);
+      this.initial = element.cloneNode(true);
     }
 
     _createClass(Canvas, [{
@@ -298,12 +298,19 @@
       value: function load() {
         var _this4 = this;
 
-        if (!this.img.width || !this.img.height || !this.img.complete) {
-          this.img.onload = function () {
-            return _this4.onImageLoaded();
+        var isImage = this.element.complete !== undefined;
+        var isVideo = this.element.oncanplay !== undefined;
+
+        if (isImage && !this.element.complete) {
+          this.element.onload = this.element.complete = function () {
+            return _this4.onElementLoaded();
+          };
+        } else if (isVideo && !this.element.oncanplay) {
+          this.element.onload = this.element.oncanplay = function () {
+            return _this4.onElementLoaded();
           };
         } else {
-          this.onImageLoaded();
+          this.onElementLoaded();
         }
 
         return this;
@@ -311,23 +318,23 @@
     }, {
       key: 'destroy',
       value: function destroy() {
-        this.img.parentNode.replaceChild(this.initial, this.img);
+        this.element.parentNode.replaceChild(this.initial, this.element);
         this.off('*');
       }
     }, {
-      key: 'onImageLoaded',
-      value: function onImageLoaded() {
+      key: 'onElementLoaded',
+      value: function onElementLoaded() {
         this.isLoaded = true;
         this.update();
-        this.img.style.willChange = 'transform';
-        this.trigger('loaded', this.img);
+        this.element.style.willChange = 'transform';
+        this.trigger('loaded', this.element);
         return this;
       }
     }, {
       key: 'update',
       value: function update() {
-        var iw = this.img.naturalWidth || this.img.width,
-            ih = this.img.naturalHeight || this.img.height,
+        var iw = this.element.naturalWidth || this.element.width || this.element.offsetWidth,
+            ih = this.element.naturalHeight || this.element.height || this.element.offsetHeight,
             ratio = iw / ih,
             size = this.size;
 
@@ -352,10 +359,10 @@
         offsetTop = -~~((nh - size.height) / 2);
         offsetLeft = -~~((nw - size.width) / 2);
 
-        this.img.width = nw;
-        this.img.height = nh;
-        this.img.style.top = offsetTop + 'px';
-        this.img.style.left = offsetLeft + 'px';
+        this.element.width = nw;
+        this.element.height = nh;
+        this.element.style.top = offsetTop + 'px';
+        this.element.style.left = offsetLeft + 'px';
 
         return this;
       }
@@ -368,9 +375,9 @@
 
         var size = this.size,
             perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
-            offset = ~~(perc * (this.img.height / size.height / 2 * this.opts.intensity) * 10);
+            offset = ~~(perc * (this.element.height / size.height / 2 * this.opts.intensity) * 10);
 
-        this.img.style[TRANSFORM_PREFIX] = HAS_MATRIX ? 'matrix(1,0,0,1, 0, ' + -offset + ')' : 'translate(0, ' + -offset + 'px)';
+        this.element.style[TRANSFORM_PREFIX] = HAS_MATRIX ? 'matrix(1,0,0,1, 0, ' + -offset + ')' : 'translate(0, ' + -offset + 'px)';
 
         return this;
       }
@@ -429,15 +436,14 @@
     _createClass(Parallax, [{
       key: 'init',
       value: function init() {
-
         if (this.bound) {
           throw 'The parallax instance has already been initialized';
         }
 
         if (!this.canvases.length && this.selector !== null) {
-          console.warn('No images were found with the selector "' + this.selector + '"');
+          console.warn('No elements were found with the selector "' + this.selector + '"');
         } else {
-          this.imagesLoaded = 0;
+          this.elementsLoaded = 0;
           this.bind();
         }
 
@@ -486,10 +492,10 @@
     }, {
       key: 'onCanvasLoaded',
       value: function onCanvasLoaded(canvas) {
-        this.trigger('image:loaded', canvas.img, canvas);
-        this.imagesLoaded++;
+        this.trigger('element:loaded', canvas.element, canvas);
+        this.elementsLoaded++;
         canvas.draw(stage);
-        if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded');
+        if (this.elementsLoaded == this.canvases.length) this.trigger('elements:loaded');
         return this;
       }
     }, {
@@ -510,7 +516,7 @@
 
           if (canvas.isLoaded && scrollTop + stage.height + offsetYBounds > canvasOffset.top && canvasOffset.top + canvasHeight > scrollTop - offsetYBounds) {
             canvas.draw({ height: height, scrollTop: scrollTop, width: width });
-            this.trigger('draw', canvas.img);
+            this.trigger('draw', canvas.element);
           }
         }
 
@@ -546,7 +552,7 @@
         $$(els).forEach(function (el) {
           var i = _this7.canvases.length;
           while (i--) {
-            if (el == _this7.canvases[i].img) {
+            if (el == _this7.canvases[i].element) {
               _this7.canvases[i].destroy();
               _this7.canvases.splice(i, 1);
               break;
