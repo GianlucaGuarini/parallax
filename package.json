@@ -4,6 +4,9 @@
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "index.js",
   "jsnext:main": "src/index.js",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "test": "npm run eslint && node make test",
     "test-coveralls": "PARALLAX_COV=1 cat ./coverage/report-lcov/lcov.info | coveralls",
