@@ -36,7 +36,7 @@ module.exports = function(config) {
     browsers: browsers,
     reporters: ['progress', 'saucelabs', 'coverage'],
     preprocessors: {
-      '../dist/*': ['coverage'],
+      'dist/*': ['coverage'],
       'test/**/*.js': ['babel']
     },
     'babelPreprocessor': {
