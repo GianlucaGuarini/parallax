@@ -32,6 +32,13 @@
       </div>
     </div>
   </section>
+
+  <section class='parallax-container' style='height: 768px;'>
+    <video class="parallax" width='100%' autoplay muted loop>
+      <source src='https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm' type='video/webm'>
+      <source src='https://interactive-examples.mdn.mozilla.net/media/examples/flower.mp4' type='video/mp4'>
+    </video>
+  </section>
   <article>
   <h1>Cillum dolore eu fugiat nulla pariatur. </h1>
   <p>Lorem ipsum dolor sit amet,
@@ -72,10 +79,10 @@
   <script src='../dist/Parallax.js'></script>
   <script>
     var parallax = new Parallax('.parallax', {})
-    parallax.on('image:loaded', function() {
+    parallax.on('element:loaded', function() {
       console.log(arguments)
     })
-    parallax.on('images:loaded', function() {
+    parallax.on('elements:loaded', function() {
       console.log(arguments)
     })
     parallax.init()

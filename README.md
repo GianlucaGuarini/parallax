@@ -36,12 +36,16 @@ $ bower install scroll-parallax --save
 
 ## Markup and initialization
 
-Once you have included the script in your page, you should wrap your parallax images in a wrapper having an `height`, `position:relative or absolute` and `overflow: hidden`
-The images will be stretched to fit always the whole wrapper size
+Once you have included the script in your page, you should wrap your parallax elements in a wrapper having an `height`, `position:relative or absolute` and `overflow: hidden`
+The elements will be stretched to fit always the whole wrapper size
 
 ```html
 <figure style="position: relative; height: 300px; overflow: hidden;">
   <img class="parallax" src="path/to/the/image.jpg" />
+</figure>
+
+<figure style="position: relative; height: 300px; overflow: hidden;">
+  <video class="parallax" src="path/to/the/video.mp4" />
 </figure>
 ```
 
@@ -57,10 +61,10 @@ The options available are only 4 at moment:
 
 | Type    | Name            | Default Value   | Description                                                                                                                                                                         |
 |-------- |---------------- |---------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Number  | `offsetYBounds` | 50              | the offset top and bottom boundaries in pixels used by the parallax to consider an image in the viewport                                                                            |
+| Number  | `offsetYBounds` | 50              | the offset top and bottom boundaries in pixels used by the parallax to consider an element in the viewport                                                                            |
 | Number  | `intensity`     | 30              | the intensity of the parallax effect                                                                                                                                                |
-| Number  | `center`        | 0.5             | the vertical center of the parallax. If you increase this value the image will be centered more on the top of the screen reducing it will look centered at bottom __this value should be between 0 and 1__ |
-| Number  | `safeHeight`    | 0.15            | the safe image height gap value in percentage that ensures it can always properly parallax. Any image should be (by default) at least 15% higher than their DOM wrappers (7.5% bottom + 7.5% top) |
+| Number  | `center`        | 0.5             | the vertical center of the parallax. If you increase this value the element will be centered more on the top of the screen reducing it will look centered at bottom __this value should be between 0 and 1__ |
+| Number  | `safeHeight`    | 0.15            | the safe element height gap value in percentage that ensures it can always properly parallax. Any element should be (by default) at least 15% higher than their DOM wrappers (7.5% bottom + 7.5% top) |
 
 You can set the Parallax options in this way:
 
@@ -73,14 +77,14 @@ var p = new Parallax('.parallax', {
 }).init()
 ```
 
-Each image could be configured using custom Parallax options (except for the `offsetYBounds`) overriding the defaults:
+Each element could be configured using custom Parallax options (except for the `offsetYBounds`) overriding the defaults:
 
 ```html
 <figure>
   <img class="parallax" data-center="0.8" data-intensity="50" src="path/to/the/image.jpg" />
 </figure>
 <figure>
-  <img class="parallax" data-center="0.2" data-intensity="10" data-safe-height="0.2" src="path/to/the/image.jpg" />
+  <video class="parallax" data-center="0.2" data-intensity="10" data-safe-height="0.2" src="path/to/the/video.mp4" />
 </figure>
 ```
 
@@ -90,21 +94,21 @@ Each Parallax instance has some useful methods that could be used to adapt it to
 
 ### Parallax.init
 
-Initialize the parallax internal event listeners. The listeners to `image:loaded` and `images:loaded` should be set before this method gets called
+Initialize the parallax internal event listeners. The listeners to `element:loaded` and `elements:loaded` should be set before this method gets called
 
 ### Parallax.on
 
 The `on` method allows you to listen the internal Parallax events from the outside.<br />
 Currently it supports:
-  - `image:loaded`: when a parallax image gets completely loaded
-  - `images:loaded`: when all the images get loaded
-  - `draw`: when a parallax image comes in the viewport and gets moved
-  - `resize`: when the parallax images get resized
-  - `update`: when the page is scrolling and the script has updated all the visible images
+  - `element:loaded`: when a parallax elment gets completely loaded
+  - `elements:loaded`: when all the elements to parallax get loaded
+  - `draw`: when a parallax element becomes visible in the the viewport and starts getting moved
+  - `resize`: when the window will be resized
+  - `update`: when the page is scrolling and the script has updated all the visible elemens
 
 ```js
-p.on('image:loaded', function(image){
-  // do something with the image tag
+p.on('element:loaded', function(element){
+  // do something with the element
 })
 ```
 
@@ -113,8 +117,8 @@ p.on('image:loaded', function(image){
 Stop listening an internal Parallax event
 
 ```js
-var fn = function (image) {
-    // do something with the image tag just drawn
+var fn = function (element) {
+    // do something with the elemnt just drawn
     p.off('draw', fn) // stop listening the draw event
   }
 p.on('draw', fn)
@@ -122,7 +126,7 @@ p.on('draw', fn)
 
 ### Parallax.refresh
 
-Refresh the position of the images visible in the viewport
+Refresh the position of the elements visible in the viewport
 
 ```js
 // do extremely heavy dom updates
@@ -131,19 +135,19 @@ p.refresh()
 
 ### Parallax.add
 
-Add new images to the parallax instance
+Add new element to the parallax instance
 
 ```js
-// inject new images
+// inject new elements
 p.add('.parallax-2')
 ```
 
 ### Parallax.remove
 
-Remove images from the parallax instance
+Remove element from the parallax instance
 
 ```js
-p.remove('.parallax-2') // remove the images from the parallax
+p.remove('.parallax-2') // remove the element from the parallax
 // and also from the DOM...
 ```
 

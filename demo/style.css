@@ -8,7 +8,7 @@ body {
 .parallax-container {
   position: relative;
   overflow: hidden;
-  background: red;
+  background: black;
 }
 
 h1 {
