@@ -173,8 +173,8 @@
 
   var rAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame || function (cb) {
     setTimeout(cb, 1000 / 60);
-  };
-  var RESIZE_DELAY = 20;
+  },
+      RESIZE_DELAY = 20;
 
   var Stage = function () {
     function Stage() {
