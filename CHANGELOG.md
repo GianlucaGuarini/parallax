@@ -1,5 +1,11 @@
 ## Changelog
 
+
+### 3.0.0
+  * added: video capabilities https://github.com/GianlucaGuarini/parallax/pull/19
+  * updated: renamed `image:loaded` and `images:loaded` => `element:loaded` and `elements:loaded`
+  * fixed: npm vulnerabilites and updated dev dependencies
+
 ### 2.1.0
   * added: the possibility to instantiate the `Parallax` class with out DOM selectors
   * updated: improved the destroy method restoring the initial DOM elements state
