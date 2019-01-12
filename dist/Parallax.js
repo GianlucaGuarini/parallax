@@ -486,7 +486,8 @@
     }, {
       key: 'refresh',
       value: function refresh() {
-        this.onResize(stage.size).onScroll(stage.scrollTop);
+        this._onResize(stage.size);
+        this._onScroll(stage.scrollTop);
         return this;
       }
     }, {

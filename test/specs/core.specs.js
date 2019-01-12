@@ -48,6 +48,14 @@ describe('Core', function () {
     expect(p.canvases).to.have.length(2)
   })
 
+  it('It can be correctly refreshed', () => {
+    p = new Parallax('.parallax').init()
+
+    p.refresh()
+
+    expect(p.canvases).to.have.length(2)
+  })
+
   it('It can be initialized also using a nodesList', () => {
     p = new Parallax(document.querySelectorAll('.parallax')).init()
     expect(p.canvases).to.have.length(2)
@@ -92,13 +100,11 @@ describe('Core', function () {
   })
 
   it('the Parallax.remove event removes the right amount of items', () => {
-
     p = new Parallax('.parallax').init()
     p.remove('figure:first-of-type .parallax')
     expect(p.canvases).to.have.length(1)
     p.remove(document.querySelectorAll('.parallax'))
     expect(p.canvases).to.have.length(0)
-
   })
 
 
