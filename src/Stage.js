@@ -4,14 +4,13 @@
 
 import o from 'riot-observable'
 
-const
-  rAF = window.requestAnimationFrame ||
+const rAF = window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
-    function (cb) { setTimeout(cb, 1000 / 60) },
-  RESIZE_DELAY = 20
+    function (cb) { setTimeout(cb, 1000 / 60) }
+const RESIZE_DELAY = 20
 
 export default class Stage {
   constructor() {
