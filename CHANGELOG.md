@@ -1,5 +1,8 @@
 ## Changelog
 
+### 3.0.2
+  * updated: reduce the size of the npm package removing demo files
+
 ### 3.0.1
   * fixed: refresh method https://github.com/GianlucaGuarini/parallax/issues/16
 
