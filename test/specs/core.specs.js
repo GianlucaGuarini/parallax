@@ -65,18 +65,18 @@ describe('Core', function () {
     expect(p.canvases).to.have.length(2)
   })
 
-  it('The "image:loaded", "images:loaded", "draw","resize" events get called', (done) => {
+  it('The "element:loaded", "elements:loaded", "draw","resize" events get called', (done) => {
     var imagesLoaded = sinon.spy(),
       resize = sinon.spy(),
       draw = sinon.spy()
 
     p = new Parallax('.parallax')
 
-    p.on('image:loaded', imagesLoaded)
+    p.on('element:loaded', imagesLoaded)
     p.one('draw', draw)
     p.one('resize', resize)
 
-    p.on('images:loaded', () => {
+    p.on('elements:loaded', () => {
 
       p.resize({ width: 300, height: 300 })
       p.resize({ width: 500, height: 500 })

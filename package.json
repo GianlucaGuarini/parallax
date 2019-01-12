@@ -5,7 +5,7 @@
   "main": "index.js",
   "jsnext:main": "src/index.js",
   "scripts": {
-    "test": "node make test",
+    "test": "npm run eslint && node make test",
     "test-coveralls": "PARALLAX_COV=1 cat ./coverage/report-lcov/lcov.info | coveralls",
     "serve": "node make serve",
     "eslint": "node make eslint",

@@ -17,62 +17,66 @@ const HAS_MATRIX = (function (div) {
 })(document.createElement('div'))
 
 export default class Canvas {
-  constructor(img, opts) {
+  constructor(element, opts) {
     // make this object observable
     o(this)
     this.opts = opts
-    this.img = img
-    this.wrapper = img.parentNode
+    this.element = element
+    this.wrapper = element.parentNode
     this.isLoaded = false
 
-    // store the initial image properties - deep clone
-    this.initial = img.cloneNode(true)
+    // store the initial element properties - deep clone
+    this.initial = element.cloneNode(true)
   }
   /**
-   * Load the image
+   * Load the element
    * @returns { Object } - Canvas
    */
   load() {
+    const isImage = this.element.complete !== undefined
+    const isVideo = this.element.oncanplay !== undefined
 
-    if (!this.img.width || !this.img.height || !this.img.complete) {
-      this.img.onload = () => this.onImageLoaded()
+    if (isImage && !this.element.complete) {
+      this.element.onload = () => this.onElementLoaded()
+    } else if (isVideo && !this.element.oncanplay) {
+      this.element.onload = this.element.oncanplay = () => this.onElementLoaded()
     } else {
-      this.onImageLoaded()
+      this.onElementLoaded()
     }
 
     return this
   }
 
   destroy() {
-    this.img.parentNode.replaceChild(this.initial, this.img)
+    this.element.parentNode.replaceChild(this.initial, this.element)
     this.off('*')
   }
 
   /**
-   * Callback triggered when the image gets loaded
+   * Callback triggered when the element gets loaded
    * @returns { Object } - Canvas
    */
-  onImageLoaded() {
+  onElementLoaded() {
     this.isLoaded = true
     this.update()
-    this.img.style.willChange = 'transform'
-    this.trigger('loaded', this.img)
+    this.element.style.willChange = 'transform'
+    this.trigger('loaded', this.element)
     return this
   }
   /**
-   * Center the image in its wrapper
+   * Center the element in its wrapper
    * @returns { Object } - Canvas
    */
   update() {
-    const iw = this.img.naturalWidth || this.img.width,
-      ih = this.img.naturalHeight || this.img.height,
+    const iw = this.element.naturalWidth || this.element.width || this.element.offsetWidth,
+      ih = this.element.naturalHeight || this.element.height || this.element.offsetHeight,
       ratio = iw / ih,
       size = this.size
 
     let nh, nw, offsetTop, offsetLeft
 
     // calculate the new width and the height
-    // keeping the image ratio
+    // keeping the element ratio
     if (size.width / ratio <= size.height) {
       nw = size.height * ratio
       nh = size.height
@@ -81,7 +85,7 @@ export default class Canvas {
       nh = size.width / ratio
     }
 
-    // zoom the image if necessary
+    // zoom the element if necessary
     if (nh <= size.height + size.height * this.opts.safeHeight) {
       nw += nw * this.opts.safeHeight
       nh += nh * this.opts.safeHeight
@@ -91,29 +95,29 @@ export default class Canvas {
     offsetTop = -~~((nh - size.height) / 2)
     offsetLeft = -~~((nw - size.width) / 2)
 
-    this.img.width = nw
-    this.img.height = nh
-    this.img.style.top = `${offsetTop}px`
-    this.img.style.left = `${offsetLeft}px`
+    this.element.width = nw
+    this.element.height = nh
+    this.element.style.top = `${offsetTop}px`
+    this.element.style.left = `${offsetLeft}px`
 
     return this
   }
   /**
-   * Draw the image on the canvas
+   * Draw the element on the canvas
    * @returns { Object } - Canvas
    */
   draw({ scrollTop, width, height }) {
     const size = this.size,
       // this value will be:
-      //  < 0 when the image is on the top
-      //  0 when the image is in the center of the screen
-      //  > 0 when the image is at the bottom
+      //  < 0 when the element is on the top
+      //  0 when the element is in the center of the screen
+      //  > 0 when the element is at the bottom
       perc = (this.offset.top + size.height * this.opts.center + height / 2 - scrollTop) / height - 1,
       // increase the percentage effect according to the intensity
-      // and the current image height
-      offset = ~~(perc * (this.img.height / size.height / 2 * this.opts.intensity) * 10)
+      // and the current element height
+      offset = ~~(perc * (this.element.height / size.height / 2 * this.opts.intensity) * 10)
 
-    this.img.style[TRANSFORM_PREFIX] = HAS_MATRIX ? `matrix(1,0,0,1, 0, ${-offset})` : `translate(0, ${-offset}px)`
+    this.element.style[TRANSFORM_PREFIX] = HAS_MATRIX ? `matrix(1,0,0,1, 0, ${-offset})` : `translate(0, ${-offset}px)`
 
     return this
   }
@@ -127,7 +131,7 @@ export default class Canvas {
   }
   /**
    * Get the parent wrapper offset
-   * @returns { Object } - top and left position of the image parent tag
+   * @returns { Object } - top and left position of the element parent tag
    */
   get offset() {
     return {
@@ -137,7 +141,7 @@ export default class Canvas {
   }
   /**
    * Get the parent wrapper size
-   * @returns { Object } - the height and the width of the image parent tag
+   * @returns { Object } - the height and the width of the element parent tag
    */
   get size() {
     const props = this.bounds
