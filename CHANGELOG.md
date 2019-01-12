@@ -1,5 +1,7 @@
 ## Changelog
 
+### 3.0.1
+  * fixed: refresh method https://github.com/GianlucaGuarini/parallax/issues/16
 
 ### 3.0.0
   * added: video capabilities https://github.com/GianlucaGuarini/parallax/pull/19
