@@ -85,7 +85,6 @@ describe('Core', function () {
       expect(draw).to.have.callCount(1)
       expect(resize).to.have.callCount(1)
       done()
-
     })
 
     p.init()
