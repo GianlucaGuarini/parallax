@@ -43,15 +43,14 @@ class Parallax {
    * @returns { Object } - Parallax
    */
   init() {
-
     if (this.bound) {
       throw 'The parallax instance has already been initialized'
     }
 
     if (!this.canvases.length && this.selector !== null) {
-      console.warn(`No images were found with the selector "${this.selector}"`)
+      console.warn(`No elements were found with the selector "${this.selector}"`)
     } else {
-      this.imagesLoaded = 0
+      this.elementsLoaded = 0
       this.bind()
     }
 
@@ -92,15 +91,15 @@ class Parallax {
   }
 
   /**
-   * Callback triggered once a canvas has loaded its image
+   * Callback triggered once a canvas has loaded its element
    * @param   { Object } canvas - canvas instance
    * @returns { Object } - Parallax
    */
   onCanvasLoaded(canvas) {
-    this.trigger('image:loaded', canvas.img, canvas)
-    this.imagesLoaded++
+    this.trigger('element:loaded', canvas.element, canvas)
+    this.elementsLoaded++
     canvas.draw(stage)
-    if (this.imagesLoaded == this.canvases.length) this.trigger('images:loaded')
+    if (this.elementsLoaded == this.canvases.length) this.trigger('elements:loaded')
     return this
   }
 
@@ -122,11 +121,11 @@ class Parallax {
 
       if (
         canvas.isLoaded &&
-        scrollTop + stage.height + offsetYBounds > canvasOffset.top &&
-        canvasOffset.top + canvasHeight > scrollTop - offsetYBounds
+          scrollTop + stage.height + offsetYBounds > canvasOffset.top &&
+          canvasOffset.top + canvasHeight > scrollTop - offsetYBounds
       ) {
         canvas.draw({ height, scrollTop, width })
-        this.trigger('draw', canvas.img)
+        this.trigger('draw', canvas.element)
       }
 
     }
@@ -165,7 +164,7 @@ class Parallax {
     $$(els).forEach((el) => {
       let i = this.canvases.length
       while (i--) {
-        if (el == this.canvases[i].img) {
+        if (el == this.canvases[i].element) {
           this.canvases[i].destroy()
           this.canvases.splice(i, 1)
           break
@@ -204,7 +203,7 @@ class Parallax {
 
   /**
    * Set the canvases instances
-   * @param   { Array } els - list of the images we want to parallax
+   * @param   { Array } els - list of the elements we want to parallax
    * @returns { Array } - list of canvas instances
    */
   createCanvases(els) {
@@ -227,7 +226,7 @@ class Parallax {
       offsetYBounds: 50,
       intensity: 30,
       center: 0.5,
-      // make sure that the images can always properly parallax
+      // make sure that the elements can always properly parallax
       // They should be at least 15% higher than their wrappers (7.5% bottom + 7.5% top)
       safeHeight: 0.15 // 15%
     }
