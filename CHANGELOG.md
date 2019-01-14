@@ -1,5 +1,8 @@
 ## Changelog
 
+### 3.0.3
+  * updated: add the `dist` folder to the npm bundle
+
 ### 3.0.2
   * updated: reduce the size of the npm package removing demo files
 
