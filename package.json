@@ -1,6 +1,6 @@
 {
   "name": "scroll-parallax",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
   "main": "dist/Parallax.js",
   "module": "src/index.js",
