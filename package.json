@@ -2,10 +2,12 @@
   "name": "scroll-parallax",
   "version": "3.0.2",
   "description": "ES6/ES2015 unobstrusive modern HW accelerated scrollable images parallax",
-  "main": "index.js",
+  "main": "dist/Parallax.js",
+  "module": "src/index.js",
   "jsnext:main": "src/index.js",
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "scripts": {
     "test": "npm run eslint && node make test",
