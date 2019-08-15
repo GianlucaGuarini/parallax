@@ -86,9 +86,10 @@ export default class Canvas {
     }
 
     // zoom the element if necessary
-    if (nh <= size.height + size.height * this.opts.safeHeight) {
-      nw += nw * this.opts.safeHeight
-      nh += nh * this.opts.safeHeight
+    const zoom = nh / size.height * (1 + this.opts.safeHeight)
+    if (zoom > 1) {
+      nw *= zoom
+      nh *= zoom
     }
 
     // calculate the offset top/left rounding it
