@@ -33,12 +33,9 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   load() {
-    const isImage = this.element instanceof HTMLImageElement && this.element.complete !== undefined
-    const isVideo = this.element instanceof HTMLVideoElement && this.element.oncanplay !== undefined
-
-    if (isImage && !this.element.complete) {
+    if (this.isImage() && !this.element.complete) {
       this.element.onload = () => this.onElementLoaded()
-    } else if (isVideo && !this.element.oncanplay) {
+    } else if (this.isVideo() && !this.element.oncanplay) {
       this.element.onload = this.element.oncanplay = () => this.onElementLoaded()
     } else {
       this.onElementLoaded()
@@ -96,6 +93,12 @@ export default class Canvas {
     offsetTop = -~~((nh - size.height) / 2)
     offsetLeft = -~~((nw - size.width) / 2)
 
+    // add CSS styles for non-media elements
+    if (!this.isImage() && !this.isVideo()) {
+      this.element.style.width = `${nw}px`
+      this.element.style.height = `${nh}px`
+    }
+
     this.element.width = nw
     this.element.height = nh
     this.element.style.top = `${offsetTop}px`
@@ -121,6 +124,22 @@ export default class Canvas {
     this.element.style[TRANSFORM_PREFIX] = HAS_MATRIX ? `matrix(1,0,0,1, 0, ${-offset})` : `translate(0, ${-offset}px)`
 
     return this
+  }
+
+  /**
+   * Check if the current element is an image
+   * @returns boolean
+   */
+  isImage() {
+    return this.element instanceof HTMLImageElement && this.element.complete !== undefined
+  }
+
+  /**
+   * Check if the current element is a video
+   * @returns boolean
+   */
+  isVideo() {
+    return this.element instanceof HTMLVideoElement && this.element.oncanplay !== undefined
   }
 
   /**
