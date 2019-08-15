@@ -33,8 +33,8 @@ export default class Canvas {
    * @returns { Object } - Canvas
    */
   load() {
-    const isImage = this.element.complete !== undefined
-    const isVideo = this.element.oncanplay !== undefined
+    const isImage = this.element instanceof HTMLImageElement && this.element.complete !== undefined
+    const isVideo = this.element instanceof HTMLVideoElement && this.element.oncanplay !== undefined
 
     if (isImage && !this.element.complete) {
       this.element.onload = () => this.onElementLoaded()
